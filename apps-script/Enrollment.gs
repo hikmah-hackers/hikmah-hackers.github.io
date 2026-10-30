@@ -31,10 +31,20 @@ function onEnrollmentSubmit(e) {
   addEnrollmentToRoster(e.response);
 }
 
+/** Accepts the form's id or its whole edit link, and explains the common mix-ups. */
 function openEnrollmentForm() {
-  var formId = PropertiesService.getScriptProperties().getProperty('ENROLLMENT_FORM_ID');
-  if (!formId) throw new Error('Set the Script Property ENROLLMENT_FORM_ID first (the long id in the form’s edit link).');
-  return FormApp.openById(formId);
+  var value = (PropertiesService.getScriptProperties().getProperty('ENROLLMENT_FORM_ID') || '').trim();
+  if (!value) throw new Error('Set the Script Property ENROLLMENT_FORM_ID to the form’s edit link (it ends in /edit).');
+  if (/\/forms\/d\/e\/|^1FAIpQL/.test(value)) {
+    throw new Error('That is the link you send to families. Use the EDIT link instead: open the form for editing and copy the address bar (…/forms/d/<id>/edit).');
+  }
+  var match = value.match(/\/d\/([A-Za-z0-9_-]{20,})/);
+  var formId = match ? match[1] : value;
+  try {
+    return FormApp.openById(formId);
+  } catch (err) {
+    throw new Error('Can’t open that form. Check that ' + Session.getEffectiveUser().getEmail() + ' can edit it (form ⋮ → Add collaborators), and that this is the form’s edit link, not its response sheet.');
+  }
 }
 
 /** Adds one form response to the Roster. Returns true if a new student was added. */
