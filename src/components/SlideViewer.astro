@@ -1,0 +1,147 @@
+---
+import type { Deck } from '../lib/decks';
+
+interface Props {
+  deck: Deck;
+  title: string;
+}
+const { deck, title } = Astro.props;
+const total = deck.slides.length;
+---
+
+<figure class="viewer" data-slide-viewer aria-roledescription="carousel" aria-label={`${title} slides`}>
+  <div class="stage" tabindex="0" aria-live="polite">
+    {
+      deck.slides.map((slide, i) => (
+        <img
+          src={slide.src}
+          alt={slide.alt}
+          width="1600"
+          height="900"
+          loading={i === 0 ? 'eager' : 'lazy'}
+          decoding="async"
+          data-index={i}
+          class:list={['slide', { 'is-current': i === 0 }]}
+        />
+      ))
+    }
+  </div>
+
+  <figcaption class="controls">
+    <button type="button" class="ctl" data-prev aria-label="Previous slide">←</button>
+    <span class="count" aria-hidden="true"><span data-current>1</span> / {total}</span>
+    <button type="button" class="ctl" data-next aria-label="Next slide">→</button>
+    <div class="progress" aria-hidden="true"><span data-progress style={`width:${100 / total}%`}></span></div>
+    <button type="button" class="ctl wide" data-fullscreen>Full screen</button>
+    {deck.pdf && <a class="ctl wide" href={deck.pdf} download>Download PDF</a>}
+  </figcaption>
+</figure>
+
+<script>
+  import { initSlideViewer } from '../scripts/slide-viewer';
+  document.querySelectorAll<HTMLElement>('[data-slide-viewer]').forEach(initSlideViewer);
+</script>
+
+<style>
+  .viewer {
+    margin: 0 0 40px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--green-950);
+    box-shadow: var(--shadow-lift);
+  }
+  .stage {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--green-900);
+    touch-action: pan-y;
+  }
+  .stage:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: -3px;
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.35s var(--ease-out),
+      visibility 0.35s;
+  }
+  .slide.is-current {
+    opacity: 1;
+    visibility: visible;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    color: var(--mint);
+  }
+  .ctl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--green-700);
+    background: var(--green-800);
+    color: var(--cream);
+    font: 600 0.95rem var(--font-display);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
+  }
+  .ctl:hover {
+    background: var(--green-700);
+    border-color: var(--gold);
+  }
+  .ctl[disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .count {
+    font: 500 0.9rem var(--font-mono);
+    min-width: 4.5em;
+    text-align: center;
+  }
+  .progress {
+    flex: 1;
+    min-width: 60px;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--green-800);
+    overflow: hidden;
+  }
+  .progress span {
+    display: block;
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.35s var(--ease-out);
+  }
+  .viewer:fullscreen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 0;
+  }
+  .viewer:fullscreen .stage {
+    flex: 1;
+    aspect-ratio: auto;
+  }
+  @media (max-width: 560px) {
+    .wide {
+      flex: 1;
+    }
+  }
+</style>

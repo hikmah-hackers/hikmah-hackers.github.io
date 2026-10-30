@@ -5,6 +5,7 @@ import StatusChip from '../components/StatusChip.astro';
 import AnnouncementList from '../components/AnnouncementList.astro';
 import { getAnnouncements, getCurrentLesson, getNextLesson, getShowcase, lessonSlug } from '../lib/content';
 import { formatDate } from '../lib/dates';
+import { getDeck } from '../lib/decks';
 import { SITE } from '../site';
 
 const current = await getCurrentLesson();
@@ -12,6 +13,7 @@ const next = await getNextLesson();
 const announcements = (await getAnnouncements()).slice(0, 3);
 const showcase = (await getShowcase()).slice(0, 3);
 const currentHref = current ? `/lessons/${lessonSlug(current)}` : '/lessons';
+const currentHasSlides = current ? getDeck(current.data.week) !== undefined : false;
 
 const steps = [
   { title: `Learn on ${SITE.classDay}`, body: 'A short, hands-on lesson. We type real code together and run it right away.' },
@@ -48,9 +50,9 @@ const year = [
                 <a class="btn" href={currentHref}>
                   Open the lesson <span class="arrow">→</span>
                 </a>
-                {current.data.slides && (
-                  <a class="btn btn-ghost" href={current.data.slides} target="_blank" rel="noopener">
-                    Slides ↗
+                {currentHasSlides && (
+                  <a class="btn btn-ghost" href={`${currentHref}#slides`}>
+                    Slides
                   </a>
                 )}
               </div>

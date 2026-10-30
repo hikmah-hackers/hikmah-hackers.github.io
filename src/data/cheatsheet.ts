@@ -17,7 +17,7 @@ export const CHEATSHEET: CheatItem[] = [
   },
   {
     title: 'Variables',
-    code: 'name = "Amina"\nage = 13\nprint(name, age)',
+    code: 'name = "Mohammad"\nage = 13\nprint(name, age)',
     note: 'A variable is a labelled box that remembers a value.',
   },
   {
@@ -62,7 +62,7 @@ export const CHEATSHEET: CheatItem[] = [
   },
   {
     title: 'Functions',
-    code: 'def greet(name):\n    return f"Salaam, {name}!"\n\nprint(greet("Yusuf"))',
+    code: 'def greet(name):\n    return f"Salaam, {name}!"\n\nprint(greet("Mohammad"))',
     note: 'def makes a reusable block of code.',
   },
 ];

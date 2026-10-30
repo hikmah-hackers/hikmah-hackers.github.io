@@ -1,0 +1,58 @@
+﻿[
+    {
+        "file":  "slide-01.webp",
+        "text":  "Week 1: Hello, Python! - Getting set up and writing our very first program - DARUL ULOOM MICHIGAN · FRIDAYS"
+    },
+    {
+        "file":  "slide-02.webp",
+        "text":  "TODAY - Our plan for 40 minutes - Hikmah Hackers · Week 1"
+    },
+    {
+        "file":  "slide-03.webp",
+        "text":  "THE BIG IDEA - Programming means giving a computer exact instructions, in the right order. - 1"
+    },
+    {
+        "file":  "slide-04.webp",
+        "text":  "OUR LANGUAGE - Why Python? - It reads almost like English, and real programmers use it every day."
+    },
+    {
+        "file":  "slide-05.webp",
+        "text":  "SETUP - Our tools this year - NOW"
+    },
+    {
+        "file":  "slide-06.webp",
+        "text":  "SETUP · 10 MIN - Open the Python editor - 1"
+    },
+    {
+        "file":  "slide-07.webp",
+        "text":  "CLASS RULES - How we help each other - Ask a partner first"
+    },
+    {
+        "file":  "slide-08.webp",
+        "text":  "LET’S CODE · TYPE ALONG - Your first program - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-09.webp",
+        "text":  "HOW IT WORKS - Three parts of a print line - print(\"Hello, World!\")"
+    },
+    {
+        "file":  "slide-10.webp",
+        "text":  "YOUR TURN · 5 MIN - Make Python print three lines about you - print(\"My name is Mohammad\")"
+    },
+    {
+        "file":  "slide-11.webp",
+        "text":  "BUG HUNT - Three mistakes everyone makes - BROKEN"
+    },
+    {
+        "file":  "slide-12.webp",
+        "text":  "DON’T LOSE YOUR WORK - The editor doesn’t save. You do. - Ctrl + A"
+    },
+    {
+        "file":  "slide-13.webp",
+        "text":  "MINI-PROJECT · DUE NEXT FRIDAY - All About Me - Required"
+    },
+    {
+        "file":  "slide-14.webp",
+        "text":  "NEXT FRIDAY - Variables: how to remember things - name = \"Mohammad\" print(\"Salaam, \" + name)"
+    }
+]

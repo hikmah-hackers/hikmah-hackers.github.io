@@ -39,7 +39,7 @@ function todayISO() {
   return Utilities.formatDate(new Date(), TIME_ZONE, 'yyyy-MM-dd');
 }
 
-/** "Amina Khan" -> "amina-khan". Names with no Latin letters get a stable hashed id. */
+/** "Mohammad Khan" -> "mohammad-khan". Names with no Latin letters get a stable hashed id. */
 function studentSlug(firstName, lastName) {
   var full = (firstName + ' ' + lastName).normalize('NFD').replace(/[̀-ͯ]/g, '');
   var slug = full.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);

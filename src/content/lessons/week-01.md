@@ -9,7 +9,6 @@ objectives:
   - Open the online Python editor and press Run
   - Use print() to show text on the screen
   - Fix the three most common beginner mistakes
-slides: https://claude.ai/artifact/Py2V1EndQzkNv2etybzBA2
 assignment:
   title: All About Me
   due: 2026-11-06
@@ -56,7 +55,7 @@ Assalamu alaikum, world!
 Make Python print three lines about you:
 
 ```python
-print("My name is Amina")
+print("My name is Mohammad")
 print("I am in grade 8")
 print("I love biryani")
 ```

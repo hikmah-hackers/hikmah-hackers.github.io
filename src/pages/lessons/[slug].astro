@@ -3,6 +3,8 @@ import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import StatusChip from '../../components/StatusChip.astro';
+import SlideViewer from '../../components/SlideViewer.astro';
+import { getDeck } from '../../lib/decks';
 import { getPublishedLessons, isReleased, lessonSlug, type Lesson } from '../../lib/content';
 import { formatDate } from '../../lib/dates';
 
@@ -20,7 +22,8 @@ interface Props {
   next?: Lesson;
 }
 const { lesson, prev, next } = Astro.props;
-const { week, title, date, unit, summary, objectives, slides, assignment } = lesson.data;
+const { week, title, date, unit, summary, objectives, assignment } = lesson.data;
+const deck = getDeck(week);
 const { Content } = await render(lesson);
 ---
 
@@ -30,14 +33,22 @@ const { Content } = await render(lesson);
       <span class="chip on-dark-chip">{formatDate(date)}</span>
       {!isReleased(lesson) && <span class="chip chip-due-soon">Preview: not public yet</span>}
       {
-        slides && (
-          <a class="btn btn-gold" href={slides} target="_blank" rel="noopener">
-            Open the slides ↗
+        deck && (
+          <a class="btn btn-gold" href="#slides">
+            View the slides ↓
           </a>
         )
       }
     </div>
   </PageHead>
+
+  {
+    deck && (
+      <section id="slides" class="wrap deck" aria-label="Lesson slides">
+        <SlideViewer deck={deck} title={`Week ${week}: ${title}`} />
+      </section>
+    )
+  }
 
   <div class="wrap layout section">
     <article class="prose">
@@ -109,6 +120,13 @@ const { Content } = await render(lesson);
 </Base>
 
 <style>
+  .deck {
+    padding-top: clamp(32px, 5vw, 56px);
+    scroll-margin-top: 80px;
+  }
+  .deck + .layout {
+    padding-top: 8px;
+  }
   .head-meta {
     margin-top: 24px;
   }

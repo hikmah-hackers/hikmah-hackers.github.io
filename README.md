@@ -7,11 +7,14 @@ Built with [Astro](https://astro.build) as plain static HTML (tiny JS, fast on s
 
 1. **Add the lesson**: copy `src/content/lessons/week-01.md` to `week-NN.md` and edit it. Set `date:` to that Friday.
    It stays hidden on the live site until that date (the site rebuilds itself every morning).
-2. **Post news (optional)**: add a file in `src/content/announcements/`.
-3. **Feature a project (optional)**: add a file in `src/content/showcase/` (first names only).
-4. Commit and push. GitHub publishes it in about a minute.
+2. **Add the slides**: save the week's PowerPoint in the project's `slides/` folder, then run
+   `npm run slides -- ../slides/week-NN-name.pptx NN`. This makes slide images and a PDF in `public/slides/week-NN/`,
+   and the lesson page shows them in a slide viewer automatically. It needs Windows with PowerPoint.
+3. **Post news (optional)**: add a file in `src/content/announcements/`.
+4. **Feature a project (optional)**: add a file in `src/content/showcase/` (first names only).
+5. Commit and push. GitHub publishes it in about a minute.
 
-Lesson front-matter fields: `week`, `title`, `date`, `unit`, `summary`, `objectives`, `slides` (link to the deck), and an optional `assignment` with `title`, `due`, `summary`, `required`, `bonus`.
+Lesson front-matter fields: `week`, `title`, `date`, `unit`, `summary`, `objectives`, and an optional `assignment` with `title`, `due`, `summary`, `required`, `bonus`.
 
 > **Heads-up:** GitHub pauses scheduled workflows after 60 days with no commits. Pushing a lesson each week keeps it running. After a long break (e.g. summer), go to **Actions → Deploy site → Enable workflow / Run workflow**.
 

@@ -31,17 +31,17 @@ Who finished **All About Me**? Last week, every line of text was typed straight 
 A **variable** is like a box with a label on it. You put something inside, and later you ask for it by its label.
 
 ```python
-name = "Amina"
+name = "Mohammad"
 print(name)
 ```
 
 You should see:
 
 ```
-Amina
+Mohammad
 ```
 
-Read `=` as **"put into"**, not "equals": *put `"Amina"` into the box called `name`*.
+Read `=` as **"put into"**, not "equals": *put `"Mohammad"` into the box called `name`*.
 
 > Notice there are **no quotes** around `name` inside `print()`. Quotes mean "print these exact letters". No quotes means "look inside the box with this label".
 
@@ -66,7 +66,7 @@ print("8" + "1")    # 81  (it just sticks the text together!)
 Use commas inside `print()`. Python puts a space between each part for you:
 
 ```python
-name = "Yusuf"
+name = "Mohammad"
 grade = 9
 print("My name is", name, "and I am in grade", grade)
 ```
@@ -74,7 +74,7 @@ print("My name is", name, "and I am in grade", grade)
 You should see:
 
 ```
-My name is Yusuf and I am in grade 9
+My name is Mohammad and I am in grade 9
 ```
 
 ## Boxes can change
@@ -122,7 +122,7 @@ print("On", day, cook, "makes", meal)
 | Broken | What happens | Fix |
 | --- | --- | --- |
 | `print(nmae)` | `NameError`: there's no box called `nmae` | Check the spelling |
-| `print("name")` | Prints the word *name*, not Amina | Remove the quotes |
+| `print("name")` | Prints the word *name*, not Mohammad | Remove the quotes |
 | `print(score)` before `score = 10` | `NameError`: the box doesn't exist yet | Create it first. Order matters |
 | `print("Grade " + 8)` | `TypeError`: can't join text and a number with `+` | Use a comma: `print("Grade", 8)` |
 

@@ -8,8 +8,8 @@ Students log in on the website with a **personal student code** (like `KQM-4827`
 ```
 submissions/
 ├── week-01/
-│   ├── amina-khan/main.py
-│   └── yusuf-ali/main.py
+│   ├── mohammad-khan/main.py
+│   └── mohammad-ali/main.py
 └── week-02/ ...
 ```
 
@@ -34,9 +34,19 @@ Resubmitting overwrites the file (Git keeps every version). Late work is accepte
 - **Student left?** Set **Active** to `no`. Their code stops working, and their work is kept.
 - The folder name comes from the roster name, so keep each student's name the same all year.
 
+### Enrollment form → Roster (automatic)
+
+Once connected, every new enrollment-form submission adds the student to the Roster (first name, last name, grade) with a student code already made. Names are tidied ("mohammad KHAN" → "Mohammad Khan"), "Grade 8" becomes `8`, and a student already on the Roster is never added twice.
+
+1. Open the enrollment form's **edit** link. The id is the long part between `/d/` and `/edit`.
+2. **Project Settings → Script Properties → Add:** `ENROLLMENT_FORM_ID` = that id.
+3. In the editor, open **`Enrollment.gs`**, pick **`connectEnrollmentForm`**, and click **Run** (approve the new permissions). It imports everyone who already enrolled and listens for new ones.
+
+The script's Google account (faiyajr@umich.edu) must be able to **edit** the form. If a different account owns it, share the form with that address first (form ⋮ → Add collaborators).
+
 ## Updating the script
 
-The code lives in this folder (`Code.gs`, `Roster.gs`, `Sheets.gs`, `Submissions.gs`, `GitHub.gs`).
+The code lives in this folder (`Code.gs`, `Roster.gs`, `Sheets.gs`, `Submissions.gs`, `GitHub.gs`, `Enrollment.gs`).
 
 ```bash
 cd apps-script
@@ -54,6 +64,7 @@ Always redeploy with `-i <that id>` so the URL in `src/site.ts` keeps working.
 | `GITHUB_REPO` | `hikmah-hackers/submissions` |
 | `SITE_URL` | `https://hikmah-hackers.github.io` |
 | `SHEET_ID` | set automatically by `setupCheck()` |
+| `ENROLLMENT_FORM_ID` | the enrollment form's id (see above) |
 
 ## Good to know
 

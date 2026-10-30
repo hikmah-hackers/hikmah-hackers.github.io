@@ -17,7 +17,6 @@ const lessons = defineCollection({
     unit: z.string(),
     summary: z.string(),
     objectives: z.array(z.string()).default([]),
-    slides: z.url().optional(),
     assignment: z
       .object({
         title: z.string(),
