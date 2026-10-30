@@ -25,7 +25,8 @@ export const SITE = {
    * The Google Apps Script web-app URL that receives submissions
    * (see apps-script/README.md). Empty = the form shows "not open yet".
    */
-  submitEndpoint: '',
+  submitEndpoint:
+    'https://script.google.com/macros/s/AKfycbzGIs69fC0v49TkUaxtnmr1uD2Veb_MrJjdvuqr3HNWgNMNsI_LzjdhRxxnrDI24qJb/exec',
 } as const;
 
 export const NAV = [
