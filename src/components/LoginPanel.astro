@@ -1,0 +1,125 @@
+---
+import LogoMark from './LogoMark.astro';
+
+interface Props {
+  title?: string;
+  lede?: string;
+}
+const { title = 'Log in with your student code', lede = 'It’s on the card your teacher gave you. It looks like KQM-4827.' } = Astro.props;
+---
+
+<form class="login card" data-login-panel method="post" action="javascript:void 0" novalidate>
+  <LogoMark size={44} class="login-mark" />
+  <h2>{title}</h2>
+  <p class="muted">{lede}</p>
+
+  <label for="f-student-code" class="sr-only">Student code</label>
+  <input
+    id="f-student-code"
+    name="studentCode"
+    class="code-input"
+    inputmode="text"
+    autocomplete="off"
+    autocapitalize="characters"
+    spellcheck="false"
+    maxlength="9"
+    placeholder="ABC-2345"
+    aria-describedby="login-error"
+    required
+  />
+  <small id="login-error" class="err" aria-live="polite"></small>
+
+  <label class="remember">
+    <input type="checkbox" name="remember" checked />
+    <span>Keep me logged in on this Chromebook</span>
+  </label>
+
+  <!-- Enabled by the script, so the form never submits without it. -->
+  <button type="submit" class="btn btn-gold" disabled><span class="label">Log in</span> <span class="arrow">→</span></button>
+  <p class="help">Lost your code? Ask your teacher for a new card.</p>
+</form>
+
+<style>
+  .login {
+    max-width: 460px;
+    margin-inline: auto;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    padding: clamp(28px, 5vw, 44px);
+    box-shadow: var(--shadow-lift);
+  }
+  .login :global(.login-mark) {
+    color: var(--green-900);
+  }
+  .login h2 {
+    font-size: 1.6rem;
+    margin: 6px 0 0;
+  }
+  .code-input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 16px;
+    font: 700 1.9rem/1 var(--font-mono);
+    letter-spacing: 0.18em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .code-input::placeholder {
+    color: #c9bea9;
+  }
+  .code-input:focus {
+    outline: none;
+    border-color: var(--green-700);
+    box-shadow: 0 0 0 4px rgb(212 168 75 / 0.35);
+  }
+  .code-input[aria-invalid='true'] {
+    border-color: var(--danger);
+    animation: shake 0.4s;
+  }
+  .err {
+    min-height: 1.3em;
+    color: var(--danger);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .remember input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--green-900);
+  }
+  .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 15px;
+    font-size: 1.05rem;
+  }
+  .help {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  @keyframes shake {
+    25% {
+      transform: translateX(-6px);
+    }
+    75% {
+      transform: translateX(6px);
+    }
+  }
+</style>

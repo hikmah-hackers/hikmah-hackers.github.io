@@ -1,41 +1,9 @@
-import {
-  ALLOWED_FILE_EXTENSIONS,
-  LIMITS,
-  validateSubmission,
-  type FieldErrors,
-  type SubmissionPayload,
-  type SubmissionResult,
-} from '../lib/submission-rules';
+import { portalApi, session, type Session } from '../lib/portal-api';
+import { storage } from '../lib/storage';
+import { ALLOWED_FILE_EXTENSIONS, LIMITS, validateWork, type FieldErrors, type WorkPayload } from '../lib/submission-rules';
+import { initLoginPanel } from './login-panel';
 
-const REQUEST_TIMEOUT_MS = 25_000;
-const SERVER_PROBLEM = 'The submission server had a problem. Please tell your teacher.';
-const PROFILE_KEY = 'hh:profile';
 const draftKey = (week: number) => `hh:draft:week-${week}`;
-
-/** localStorage can be blocked on managed Chromebooks; never let that break the form. */
-const storage = {
-  get(key: string): string | null {
-    try {
-      return localStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  },
-  set(key: string, value: string): void {
-    try {
-      localStorage.setItem(key, value);
-    } catch {
-      /* storage unavailable: drafts just won't persist */
-    }
-  },
-  remove(key: string): void {
-    try {
-      localStorage.removeItem(key);
-    } catch {
-      /* ignore */
-    }
-  },
-};
 
 function field<T extends HTMLElement>(form: HTMLFormElement, name: string): T {
   const el = form.elements.namedItem(name);
@@ -43,71 +11,33 @@ function field<T extends HTMLElement>(form: HTMLFormElement, name: string): T {
   return el as unknown as T;
 }
 
-/** Curly apostrophes (O’Brien) are stored as straight ones. */
-const normalizeName = (name: string) => name.trim().replace(/’/g, "'");
-
-function readPayload(form: HTMLFormElement): SubmissionPayload {
-  const value = (name: string) => field<HTMLInputElement>(form, name).value;
+function readWork(form: HTMLFormElement): WorkPayload {
   return {
-    firstName: normalizeName(value('firstName')),
-    lastName: normalizeName(value('lastName')),
-    grade: Number(value('grade')),
-    week: Number(value('week')),
-    code: value('code').replace(/\r\n/g, '\n'),
-    note: value('note').trim(),
-    passcode: value('passcode').trim(),
+    week: Number(field<HTMLSelectElement>(form, 'week').value),
+    code: field<HTMLTextAreaElement>(form, 'code').value.replace(/\r\n/g, '\n'),
+    note: field<HTMLInputElement>(form, 'note').value.trim(),
   };
 }
 
 function showErrors(form: HTMLFormElement, errors: FieldErrors): void {
   form.querySelectorAll<HTMLElement>('[data-error-for]').forEach((slot) => {
-    const name = slot.dataset.errorFor as keyof SubmissionPayload;
+    const name = slot.dataset.errorFor as keyof WorkPayload;
     const message = errors[name] ?? '';
     slot.textContent = message;
-    field<HTMLInputElement>(form, name).setAttribute('aria-invalid', message ? 'true' : 'false');
+    field<HTMLElement>(form, name).setAttribute('aria-invalid', message ? 'true' : 'false');
   });
-  const firstInvalid = form.querySelector<HTMLElement>('[aria-invalid="true"]');
-  firstInvalid?.focus();
+  form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
 }
 
-function setStatus(box: HTMLElement, kind: 'success' | 'error' | 'info', title: string, detail = ''): void {
+function setStatus(box: HTMLElement, kind: 'success' | 'error', title: string, detail = ''): void {
   box.hidden = false;
   box.dataset.kind = kind;
-  box.replaceChildren();
   const heading = document.createElement('strong');
   heading.textContent = title;
-  box.append(heading);
-  if (detail) {
-    const body = document.createElement('p');
-    body.textContent = detail;
-    box.append(body);
-  }
+  const body = document.createElement('p');
+  body.textContent = detail;
+  box.replaceChildren(heading, ...(detail ? [body] : []));
   box.focus();
-}
-
-async function postSubmission(endpoint: string, payload: SubmissionPayload): Promise<SubmissionResult> {
-  const controller = new AbortController();
-  const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  try {
-    // text/plain avoids a CORS preflight, which Apps Script can't answer.
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-    });
-    if (!response.ok) return { success: false, error: SERVER_PROBLEM };
-    try {
-      return (await response.json()) as SubmissionResult;
-    } catch {
-      // An HTML reply usually means the Apps Script deployment isn't public.
-      return { success: false, error: SERVER_PROBLEM };
-    }
-  } catch {
-    return { success: false, error: 'Could not reach the server. Check your internet and try again.' };
-  } finally {
-    window.clearTimeout(timer);
-  }
 }
 
 function hasAllowedExtension(fileName: string): boolean {
@@ -144,7 +74,6 @@ function wireDrafts(form: HTMLFormElement, codeBox: HTMLTextAreaElement): void {
   const weekSelect = field<HTMLSelectElement>(form, 'week');
   let currentWeek = Number(weekSelect.value);
   codeBox.value = storage.get(draftKey(currentWeek)) ?? '';
-
   weekSelect.addEventListener('change', () => {
     storage.set(draftKey(currentWeek), codeBox.value);
     currentWeek = Number(weekSelect.value);
@@ -153,57 +82,60 @@ function wireDrafts(form: HTMLFormElement, codeBox: HTMLTextAreaElement): void {
   codeBox.addEventListener('input', () => storage.set(draftKey(currentWeek), codeBox.value));
 }
 
-function restoreProfile(form: HTMLFormElement): void {
-  const saved = storage.get(PROFILE_KEY);
-  if (!saved) return;
-  try {
-    const profile = JSON.parse(saved) as Partial<Record<'firstName' | 'lastName' | 'grade', string>>;
-    (['firstName', 'lastName', 'grade'] as const).forEach((name) => {
-      const value = profile[name];
-      if (typeof value === 'string') field<HTMLInputElement>(form, name).value = value;
-    });
-  } catch {
-    storage.remove(PROFILE_KEY);
-  }
-}
-
 function preselectWeek(form: HTMLFormElement): void {
   const week = new URLSearchParams(window.location.search).get('week');
   const select = field<HTMLSelectElement>(form, 'week');
   if (week && [...select.options].some((option) => option.value === week)) select.value = week;
 }
 
-export function initSubmitForm(form: HTMLFormElement): void {
+function showForm(form: HTMLFormElement, gate: HTMLElement, current: Session): void {
+  const who = form.querySelector<HTMLElement>('[data-student-name]');
+  if (who) who.textContent = `${current.student.firstName} ${current.student.lastName}`;
+  gate.hidden = true;
+  form.hidden = false;
+}
+
+export function initSubmitForm(form: HTMLFormElement, gate: HTMLElement): void {
   const endpoint = form.dataset.endpoint ?? '';
   const validWeeks = (form.dataset.weeks ?? '').split(',').filter(Boolean).map(Number);
   const status = document.getElementById('submit-status');
   const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
   const buttonLabel = button?.querySelector<HTMLElement>('.label');
-  if (!status || !button || !buttonLabel) return;
+  const gateForm = gate.querySelector<HTMLFormElement>('[data-login-panel]');
+  if (!status || !button || !buttonLabel || !gateForm) return;
   const codeBox = field<HTMLTextAreaElement>(form, 'code');
   const idleLabel = buttonLabel.textContent ?? 'Submit';
 
-  restoreProfile(form);
   preselectWeek(form);
   wireDrafts(form, codeBox);
   wireFileInput(form, codeBox);
-  button.disabled = false;
+  initLoginPanel(gateForm, { endpoint, onLogin: (s) => showForm(form, gate, s) });
+  form.querySelector('[data-logout]')?.addEventListener('click', () => {
+    session.clear();
+    form.hidden = true;
+    gate.hidden = false;
+  });
+
+  const saved = session.get();
+  if (saved) showForm(form, gate, saved);
+  else gate.hidden = false;
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const payload = readPayload(form);
-    const errors = validateSubmission(payload, validWeeks);
+    const current = session.get();
+    if (!current) {
+      form.hidden = true;
+      gate.hidden = false;
+      return;
+    }
+    const work = readWork(form);
+    const errors = validateWork(work, validWeeks);
     showErrors(form, errors);
     if (Object.keys(errors).length > 0) return;
 
-    if (!endpoint) {
-      setStatus(status, 'info', 'Submissions aren’t open yet.', 'Save your code in your Google Doc for now.');
-      return;
-    }
-
     button.disabled = true;
     buttonLabel.textContent = 'Sending…';
-    const result = await postSubmission(endpoint, payload);
+    const result = await portalApi.submit(endpoint, current.studentCode, work);
     button.disabled = false;
     buttonLabel.textContent = idleLabel;
 
@@ -211,18 +143,17 @@ export function initSubmitForm(form: HTMLFormElement): void {
       setStatus(status, 'error', 'That didn’t go through.', result.error ?? 'Please try again.');
       return;
     }
-
-    storage.set(PROFILE_KEY, JSON.stringify({ firstName: payload.firstName, lastName: payload.lastName, grade: String(payload.grade) }));
-    storage.remove(draftKey(payload.week));
+    storage.remove(draftKey(work.week));
     const { late, resubmission } = result.data;
     const detail = [
       resubmission ? 'This replaced your earlier submission.' : 'Your teacher will see it.',
       late ? 'It was after the due date, so it’s marked late. That’s OK!' : '',
+      'See it any time on your My work page.',
     ]
       .filter(Boolean)
       .join(' ');
-    setStatus(status, 'success', `Submitted! Week ${payload.week} is in.`, detail);
-    field<HTMLTextAreaElement>(form, 'code').value = '';
+    setStatus(status, 'success', `Submitted! Week ${work.week} is in.`, detail);
+    codeBox.value = '';
     field<HTMLInputElement>(form, 'note').value = '';
     field<HTMLInputElement>(form, 'file').value = '';
   });

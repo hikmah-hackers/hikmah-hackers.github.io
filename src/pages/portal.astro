@@ -1,0 +1,230 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import LoginPanel from '../components/LoginPanel.astro';
+import { getAssignments } from '../lib/content';
+import { SITE } from '../site';
+
+const assignments = (await getAssignments()).map((lesson) => ({
+  week: lesson.data.week,
+  title: lesson.data.assignment!.title,
+  due: lesson.data.assignment!.due,
+}));
+const config = { endpoint: SITE.submitEndpoint, timeZone: SITE.timeZone, assignments };
+---
+
+<Base title="My work" description="Your mini-projects, progress, and feedback.">
+  <PageHead eyebrow="My work" title="Your coding journey" lede="Log in with your student code to see your progress, everything you’ve turned in, and notes from your teacher." />
+
+  <section class="section">
+    <div class="wrap">
+      <div id="portal-gate" hidden>
+        <LoginPanel />
+      </div>
+
+      <p id="portal-loading" class="loading" hidden>Loading your work…</p>
+
+      <div id="portal-dash" hidden>
+        <div class="dash-head">
+          <h2>Salaam, <span id="portal-name"></span>!</h2>
+          <div class="row">
+            <a class="btn btn-gold" href="/submit">Submit work <span class="arrow">→</span></a>
+            <button id="portal-logout" type="button" class="btn btn-ghost">Log out</button>
+          </div>
+        </div>
+
+        <div id="portal-stats" class="stats" aria-live="polite"></div>
+
+        <h3 class="sub-title">Progress</h3>
+        <ol id="portal-tiles" class="tiles"></ol>
+
+        <h3 class="sub-title">What you’ve turned in</h3>
+        <div id="portal-subs" class="subs"></div>
+      </div>
+
+      <noscript><div class="empty">The portal needs JavaScript turned on.</div></noscript>
+    </div>
+  </section>
+</Base>
+
+<script type="application/json" id="portal-config" set:html={JSON.stringify(config).replace(/</g, '\\u003c')} />
+
+<script>
+  import { initPortal } from '../scripts/portal';
+  const raw = document.getElementById('portal-config')?.textContent ?? '{}';
+  initPortal(JSON.parse(raw));
+</script>
+
+<style>
+  .loading {
+    text-align: center;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  .dash-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .dash-head h2 {
+    margin: 0;
+  }
+  #portal-name {
+    color: var(--gold-ink);
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .stats :global(.stat) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 22px 24px;
+    background: var(--green-900);
+    color: var(--mint);
+    border-radius: var(--radius);
+    animation: rise 0.6s var(--ease-out) both;
+  }
+  .stats :global(.stat:nth-child(2)) {
+    animation-delay: 80ms;
+  }
+  .stats :global(.stat:nth-child(3)) {
+    animation-delay: 160ms;
+  }
+  .stats :global(strong) {
+    font: 700 2.4rem/1 var(--font-display);
+    color: var(--gold);
+  }
+  .sub-title {
+    margin: 44px 0 16px;
+    font-size: 1.35rem;
+  }
+  .tiles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .tiles :global(.tile) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--cream-50);
+    animation: rise 0.5s var(--ease-out) both;
+  }
+  .tiles :global(.tile-wk) {
+    font: 700 0.75rem var(--font-mono);
+    letter-spacing: 0.1em;
+    color: var(--gold-ink);
+  }
+  .tiles :global(.tile-title) {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .tiles :global(.tile-status) {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .tiles :global(.tile-done) {
+    background: #e3efe8;
+    border-color: #c4dccf;
+  }
+  .tiles :global(.tile-done .tile-status) {
+    color: #1d5a43;
+  }
+  .tiles :global(.tile-late) {
+    background: #fbefd2;
+    border-color: #efd9a3;
+  }
+  .tiles :global(.tile-late .tile-status) {
+    color: var(--gold-ink);
+  }
+  .tiles :global(.tile-missing) {
+    border-style: dashed;
+  }
+  .tiles :global(.tile-missing .tile-status) {
+    color: var(--danger);
+  }
+  .tiles :global(.tile-open .tile-status) {
+    color: var(--ink-soft);
+  }
+  .subs {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .subs :global(.sub) {
+    animation: rise 0.5s var(--ease-out) both;
+  }
+  .subs :global(.sub-head) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .subs :global(.when) {
+    font-size: 0.9rem;
+  }
+  .subs :global(.feedback) {
+    margin: 6px 0;
+    padding: 14px 18px;
+    border-left: 4px solid var(--gold);
+    background: #fbefd2;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+  .subs :global(.feedback span) {
+    font: 600 0.75rem var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-ink);
+  }
+  .subs :global(.feedback p) {
+    margin: 4px 0 0;
+    color: var(--ink);
+    font-size: 1.05rem;
+  }
+  .subs :global(.no-feedback) {
+    font-style: italic;
+  }
+  .subs :global(.code-wrap) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .subs :global(.code) {
+    background: var(--green-950);
+    color: var(--cream);
+    padding: 16px 18px;
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    font-size: 0.88rem;
+    margin: 0;
+  }
+  .subs :global(.small) {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    align-self: flex-start;
+  }
+  .subs :global(.link) {
+    font-weight: 600;
+    color: var(--green-700);
+    align-self: flex-start;
+    padding-top: 8px;
+  }
+  @media (max-width: 640px) {
+    .stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

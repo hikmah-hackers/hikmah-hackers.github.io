@@ -1,58 +1,63 @@
-# Submissions setup (one-time, ~15 minutes)
+# Student portal + submissions
 
-Students submit on the website → this Google Apps Script → a **private** GitHub repo:
+Students log in on the website with a **personal student code** (like `KQM-4827`). The code is their identity:
+
+- **My work** (`/portal`): progress tracker, everything they've turned in, and your feedback.
+- **Submit** (`/submit`): their name is filled in automatically. The code goes to the **private** repo:
 
 ```
 submissions/
 ├── week-01/
 │   ├── amina-khan/main.py
 │   └── yusuf-ali/main.py
-└── week-02/
-    └── ...
+└── week-02/ ...
 ```
 
-Resubmitting overwrites the file (Git keeps every version). Work after the due date is accepted and marked `[LATE]` in the file header, the commit message, and the Sheet.
+Resubmitting overwrites the file (Git keeps every version). Late work is accepted and marked `[LATE]`.
 
-## 1. Create the private submissions repo
+## The class Google Sheet
 
-1. In the `hikmah-hackers` GitHub org, create a repo named **`submissions`** and set it to **Private**.
-2. Check "Add a README" so it has a `main` branch.
+`setupCheck()` creates a sheet called **Hikmah Hackers: Class** in your Drive, with two tabs:
 
-## 2. Create a GitHub token (limited to that one repo)
+| Tab | What it's for |
+| --- | --- |
+| **Roster** | One row per student: `Code`, `First name`, `Last name`, `Grade`, `Active`. You type names; codes are generated for you. |
+| **Submissions** | One row per submission (added automatically). Type in the **Feedback** column and students see it on their My work page. |
 
-1. GitHub → your avatar → **Settings → Developer settings → Fine-grained tokens → Generate new token**.
-2. Resource owner: **hikmah-hackers**. Repository access: **Only select repositories → submissions**.
-3. Permissions → Repository → **Contents: Read and write**. Nothing else.
-4. Set an expiry (e.g. end of the school year) and copy the token.
+### Adding students
 
-## 3. Create the Apps Script
+1. Type each student's **First name**, **Last name**, and **Grade** in the Roster tab (leave Code empty).
+2. In the Apps Script editor, run **`generateStudentCodes`**. Every new student gets a unique code.
+3. Give each student their code (a small card or slip of paper works well).
 
-1. Go to <https://script.google.com> → **New project**, name it "Hikmah Hackers Submissions".
-2. Paste all of `Code.gs` into the editor and save.
-3. **Project Settings (gear) → Script Properties → Add**:
+- **Lost code?** Delete it from the Code cell and run `generateStudentCodes` again for a new one.
+- **Student left?** Set **Active** to `no`. Their code stops working, and their work is kept.
+- The folder name comes from the roster name, so keep each student's name the same all year.
 
-   | Property | Value |
-   | --- | --- |
-   | `GITHUB_TOKEN` | the token from step 2 |
-   | `GITHUB_REPO` | `hikmah-hackers/submissions` |
-   | `CLASS_PASSCODE` | a passcode you'll tell students in class (change it each term) |
-   | `SITE_URL` | `https://hikmah-hackers.github.io` |
-   | `SHEET_ID` | *(optional)* the id from a Google Sheet URL, for a submissions log |
+## Updating the script
 
-4. Pick **`setupCheck`** in the function dropdown → **Run** → approve permissions. The log should say `OK`.
+The code lives in this folder (`Code.gs`, `Roster.gs`, `Sheets.gs`, `Submissions.gs`, `GitHub.gs`).
 
-## 4. Deploy it as a web app
+```bash
+cd apps-script
+npx @google/clasp push --force
+npx @google/clasp create-deployment -i AKfycbzGIs69fC0v49TkUaxtnmr1uD2Veb_MrJjdvuqr3HNWgNMNsI_LzjdhRxxnrDI24qJb --description "what changed"
+```
 
-1. **Deploy → New deployment → type: Web app**.
-2. Execute as: **Me**. Who has access: **Anyone**. (Students have no Google login on this form, and the passcode protects it.)
-3. Copy the **Web app URL** (ends in `/exec`).
-4. Paste it into `website/src/site.ts` as `submitEndpoint`, then commit and push.
+Always redeploy with `-i <that id>` so the URL in `src/site.ts` keeps working.
 
-> When you edit `Code.gs` later, use **Deploy → Manage deployments → Edit → New version** so the URL stays the same.
+## Script Properties (Project Settings)
+
+| Property | Value |
+| --- | --- |
+| `GITHUB_TOKEN` | fine-grained token: Contents read & write on `hikmah-hackers/submissions` only |
+| `GITHUB_REPO` | `hikmah-hackers/submissions` |
+| `SITE_URL` | `https://hikmah-hackers.github.io` |
+| `SHEET_ID` | set automatically by `setupCheck()` |
 
 ## Good to know
 
 - The token never reaches students. It lives only in Script Properties.
-- Change `CLASS_PASSCODE` anytime. No redeploy needed.
-- Rate limits: 3 submissions per student per minute, 60 total per minute.
-- To give feedback, open the file on GitHub and comment, or use the Sheet's Note column.
+- 30 wrong codes in 10 minutes pauses logins for everyone for 10 minutes, which makes codes impractical to guess.
+- Each student can submit up to 4 times per minute.
+- Don't run submitted code on a computer logged into your GitHub or Google account. Use a browser sandbox.

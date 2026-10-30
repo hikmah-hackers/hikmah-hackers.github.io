@@ -2,63 +2,44 @@
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import { getAssignments } from '../lib/content';
-import { GRADES, LIMITS } from '../lib/submission-rules';
+import LoginPanel from '../components/LoginPanel.astro';
+import { LIMITS } from '../lib/submission-rules';
 import { formatDate } from '../lib/dates';
 import { SITE } from '../site';
 
 const assignments = await getAssignments();
 const weeks = assignments.map((lesson) => lesson.data.week);
-const isOpen = SITE.submitEndpoint.length > 0;
 ---
 
 <Base title="Submit work" description="Turn in your weekly mini-project.">
   <PageHead
     eyebrow="Submit"
     title="Turn in your mini-project"
-    lede="Paste your code (or choose your .py file), fill in your name, and press Submit. You can resubmit as many times as you like. The newest one counts."
+    lede="Log in with your student code, paste your code (or choose your .py file), and press Submit. You can resubmit as many times as you like. The newest one counts."
   />
 
   <section class="section">
     <div class="wrap layout">
-      <form
-        id="submit-form"
-        class="form card"
-        method="post"
-        action="javascript:void 0"
-        novalidate
-        data-endpoint={SITE.submitEndpoint}
-        data-weeks={weeks.join(',')}
-      >
-        {
-          !isOpen && (
-            <p class="notice" role="note">
-              Submissions open soon. You can still fill this in. Your code is saved on this computer as you type.
-            </p>
-          )
-        }
-
-        <div class="two">
-          <div class="field">
-            <label for="f-firstName">First name</label>
-            <input id="f-firstName" name="firstName" autocomplete="given-name" maxlength={LIMITS.nameMax} required aria-describedby="err-firstName" />
-            <small id="err-firstName" class="err" data-error-for="firstName" aria-live="polite"></small>
-          </div>
-          <div class="field">
-            <label for="f-lastName">Last name</label>
-            <input id="f-lastName" name="lastName" autocomplete="family-name" maxlength={LIMITS.nameMax} required aria-describedby="err-lastName" />
-            <small id="err-lastName" class="err" data-error-for="lastName" aria-live="polite"></small>
-          </div>
+      <div class="main-col">
+        <div id="submit-gate" hidden>
+          <LoginPanel title="Log in to submit" />
         </div>
 
-        <div class="two">
-          <div class="field">
-            <label for="f-grade">Grade</label>
-            <select id="f-grade" name="grade" required aria-describedby="err-grade">
-              <option value="">Choose…</option>
-              {GRADES.map((grade) => <option value={grade}>Grade {grade}</option>)}
-            </select>
-            <small id="err-grade" class="err" data-error-for="grade" aria-live="polite"></small>
+        <form
+          id="submit-form"
+          class="form card"
+          method="post"
+          action="javascript:void 0"
+          novalidate
+          hidden
+          data-endpoint={SITE.submitEndpoint}
+          data-weeks={weeks.join(',')}
+        >
+          <div class="who">
+            <span>Submitting as <strong data-student-name></strong></span>
+            <button type="button" class="linkish" data-logout>Not you? Log out</button>
           </div>
+
           <div class="field">
             <label for="f-week">Which week?</label>
             <select id="f-week" name="week" required aria-describedby="err-week">
@@ -74,43 +55,37 @@ const isOpen = SITE.submitEndpoint.length > 0;
             </select>
             <small id="err-week" class="err" data-error-for="week" aria-live="polite"></small>
           </div>
-        </div>
 
-        <div class="field">
-          <label for="f-code">Your code</label>
-          <textarea
-            id="f-code"
-            name="code"
-            rows="14"
-            spellcheck="false"
-            autocapitalize="off"
-            autocomplete="off"
-            placeholder={'print("My name is ...")'}
-            aria-describedby="err-code"></textarea>
-          <small id="err-code" class="err" data-error-for="code" aria-live="polite"></small>
-        </div>
+          <div class="field">
+            <label for="f-code">Your code</label>
+            <textarea
+              id="f-code"
+              name="code"
+              rows="14"
+              spellcheck="false"
+              autocapitalize="off"
+              autocomplete="off"
+              placeholder={'print("My name is ...")'}
+              aria-describedby="err-code"></textarea>
+            <small id="err-code" class="err" data-error-for="code" aria-live="polite"></small>
+          </div>
 
-        <div class="field file">
-          <label for="f-file">…or choose a file</label>
-          <input id="f-file" type="file" name="file" accept=".py,.txt,text/plain,text/x-python" />
-        </div>
+          <div class="field file">
+            <label for="f-file">…or choose a file</label>
+            <input id="f-file" type="file" name="file" accept=".py,.txt,text/plain,text/x-python" />
+          </div>
 
-        <div class="field">
-          <label for="f-note">Note for your teacher <em>(optional)</em></label>
-          <input id="f-note" name="note" maxlength={LIMITS.noteMax} placeholder="Anything you got stuck on?" aria-describedby="err-note" />
-          <small id="err-note" class="err" data-error-for="note" aria-live="polite"></small>
-        </div>
+          <div class="field">
+            <label for="f-note">Note for your teacher <em>(optional)</em></label>
+            <input id="f-note" name="note" maxlength={LIMITS.noteMax} placeholder="Anything you got stuck on?" aria-describedby="err-note" />
+            <small id="err-note" class="err" data-error-for="note" aria-live="polite"></small>
+          </div>
 
-        <div class="field">
-          <label for="f-passcode">Class passcode</label>
-          <input id="f-passcode" name="passcode" type="password" autocomplete="off" maxlength={LIMITS.passcodeMax} required aria-describedby="err-passcode" />
-          <small id="err-passcode" class="err" data-error-for="passcode" aria-live="polite"></small>
-        </div>
-
-        <!-- Enabled by the script, so the form never submits without it. -->
-        <button type="submit" class="btn btn-gold submit-btn" disabled><span class="label">Submit</span> <span class="arrow">→</span></button>
-        <div id="submit-status" class="status" role="status" tabindex="-1" hidden></div>
-      </form>
+          <button type="submit" class="btn btn-gold submit-btn"><span class="label">Submit</span> <span class="arrow">→</span></button>
+          <div id="submit-status" class="status" role="status" tabindex="-1" hidden></div>
+        </form>
+        <noscript><div class="empty">Submitting needs JavaScript turned on.</div></noscript>
+      </div>
 
       <aside class="tips" data-reveal>
         <p class="eyebrow">Before you submit</p>
@@ -118,7 +93,7 @@ const isOpen = SITE.submitEndpoint.length > 0;
           <li>Press <strong>Run</strong> one last time. Does it work?</li>
           <li>Click in your code, press <kbd>Ctrl</kbd> + <kbd>A</kbd>, then <kbd>Ctrl</kbd> + <kbd>C</kbd>.</li>
           <li>Click in the code box here and press <kbd>Ctrl</kbd> + <kbd>V</kbd>.</li>
-          <li>Use the same name every week so your work stays together.</li>
+          <li>Check <a href="/portal">My work</a> later for notes from your teacher.</li>
         </ol>
         <p class="muted small">Your code goes to a private folder only your teacher can see.</p>
       </aside>
@@ -129,7 +104,8 @@ const isOpen = SITE.submitEndpoint.length > 0;
 <script>
   import { initSubmitForm } from '../scripts/submit-form';
   const form = document.getElementById('submit-form');
-  if (form instanceof HTMLFormElement) initSubmitForm(form);
+  const gate = document.getElementById('submit-gate');
+  if (form instanceof HTMLFormElement && gate) initSubmitForm(form, gate);
 </script>
 
 <style>
@@ -144,10 +120,27 @@ const isOpen = SITE.submitEndpoint.length > 0;
     padding: clamp(22px, 4vw, 36px);
     box-shadow: var(--shadow);
   }
-  .two {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
+  .who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    background: #e3efe8;
+    color: #1d5a43;
+  }
+  .linkish {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--green-700);
+    background: none;
+    border: 0;
+    padding: 0;
+    text-decoration: underline;
+    cursor: pointer;
   }
   .field {
     display: flex;
@@ -215,14 +208,6 @@ const isOpen = SITE.submitEndpoint.length > 0;
     font-size: 1.1rem;
     padding: 16px;
   }
-  .notice {
-    margin: 0;
-    padding: 12px 16px;
-    border-radius: var(--radius-sm);
-    background: #fbefd2;
-    color: var(--gold-ink);
-    font-weight: 600;
-  }
   .status {
     padding: 16px 18px;
     border-radius: var(--radius-sm);
@@ -244,10 +229,6 @@ const isOpen = SITE.submitEndpoint.length > 0;
     color: var(--danger);
     border: 1px solid #f1c9b4;
   }
-  .status[data-kind='info'] {
-    background: #fbefd2;
-    color: var(--gold-ink);
-  }
   .tips {
     position: sticky;
     top: 92px;
@@ -268,8 +249,7 @@ const isOpen = SITE.submitEndpoint.length > 0;
     margin: 0;
   }
   @media (max-width: 860px) {
-    .layout,
-    .two {
+    .layout {
       grid-template-columns: 1fr;
     }
     .tips {
