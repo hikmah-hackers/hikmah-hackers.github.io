@@ -1,0 +1,111 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import StatusChip from '../components/StatusChip.astro';
+import { getAssignments, lessonSlug } from '../lib/content';
+import { formatDate } from '../lib/dates';
+
+const assignments = await getAssignments();
+---
+
+<Base title="Assignments" description="Weekly mini-projects and due dates.">
+  <PageHead
+    eyebrow="Assignments"
+    title="Mini-projects"
+    lede="One small project each week, due the next class. Late work is still accepted, it’s just marked late."
+  />
+
+  <section class="section">
+    <div class="wrap">
+      {assignments.length === 0 && <div class="empty">No assignments yet. The first one comes with Week 1.</div>}
+      <ul class="list">
+        {
+          assignments.map((lesson, i) => {
+            const assignment = lesson.data.assignment!;
+            return (
+              <li class="card is-hoverable item" data-reveal style={`--i:${i}`}>
+                <div class="when">
+                  <span class="wk">Week {lesson.data.week}</span>
+                  <span class="date">Due {formatDate(assignment.due, 'short')}</span>
+                </div>
+                <div class="what">
+                  <h3>{assignment.title}</h3>
+                  <p>{assignment.summary}</p>
+                  <a class="link" href={`/lessons/${lessonSlug(lesson)}#assignment`}>
+                    Read the instructions →
+                  </a>
+                </div>
+                <div class="actions">
+                  <StatusChip due={assignment.due} />
+                  <a class="btn btn-gold" href={`/submit?week=${lesson.data.week}`}>
+                    Submit
+                  </a>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .item {
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    align-items: center;
+    gap: 28px;
+  }
+  .when {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .wk {
+    font: 700 1.35rem var(--font-display);
+  }
+  .date {
+    font: 500 0.85rem var(--font-mono);
+    color: var(--gold-ink);
+  }
+  .what h3 {
+    margin: 0 0 4px;
+  }
+  .link {
+    display: inline-block;
+    margin-top: 8px;
+    font-weight: 600;
+    color: var(--green-700);
+    text-decoration: none;
+  }
+  .link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--gold);
+  }
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+  @media (max-width: 760px) {
+    .item {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .actions {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+</style>

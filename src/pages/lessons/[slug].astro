@@ -1,0 +1,199 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import StatusChip from '../../components/StatusChip.astro';
+import { getPublishedLessons, isReleased, lessonSlug, type Lesson } from '../../lib/content';
+import { formatDate } from '../../lib/dates';
+
+export async function getStaticPaths() {
+  const lessons = await getPublishedLessons();
+  return lessons.map((lesson, i) => ({
+    params: { slug: lessonSlug(lesson) },
+    props: { lesson, prev: lessons[i - 1], next: lessons[i + 1] },
+  }));
+}
+
+interface Props {
+  lesson: Lesson;
+  prev?: Lesson;
+  next?: Lesson;
+}
+const { lesson, prev, next } = Astro.props;
+const { week, title, date, unit, summary, objectives, slides, assignment } = lesson.data;
+const { Content } = await render(lesson);
+---
+
+<Base title={`Week ${week}: ${title}`} description={summary}>
+  <PageHead eyebrow={`Week ${week} · ${unit}`} title={title} lede={summary}>
+    <div class="row head-meta rise" style="--i:3">
+      <span class="chip on-dark-chip">{formatDate(date)}</span>
+      {!isReleased(lesson) && <span class="chip chip-due-soon">Preview: not public yet</span>}
+      {
+        slides && (
+          <a class="btn btn-gold" href={slides} target="_blank" rel="noopener">
+            Open the slides ↗
+          </a>
+        )
+      }
+    </div>
+  </PageHead>
+
+  <div class="wrap layout section">
+    <article class="prose">
+      {
+        objectives.length > 0 && (
+          <div class="objectives" data-reveal>
+            <p class="eyebrow">By the end of this lesson you can…</p>
+            <ul>
+              {objectives.map((objective) => (
+                <li>{objective}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+      <Content />
+    </article>
+
+    {
+      assignment && (
+        <aside class="hw" id="assignment" data-reveal>
+          <div class="row between">
+            <p class="eyebrow">Mini-project</p>
+            <StatusChip due={assignment.due} />
+          </div>
+          <h2>{assignment.title}</h2>
+          <p class="muted">{assignment.summary}</p>
+          <h3>Required</h3>
+          <ul>
+            {assignment.required.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+          {assignment.bonus && (
+            <>
+              <h3>Bonus</h3>
+              <p>{assignment.bonus}</p>
+            </>
+          )}
+          <p class="due">Due {formatDate(assignment.due)}</p>
+          <a class="btn btn-gold full" href={`/submit?week=${week}`}>
+            Submit your code <span class="arrow">→</span>
+          </a>
+        </aside>
+      )
+    }
+  </div>
+
+  <nav class="wrap pager" aria-label="Lesson navigation">
+    {
+      prev ? (
+        <a class="card" href={`/lessons/${lessonSlug(prev)}`}>
+          <span class="meta">← Week {prev.data.week}</span>
+          <h3>{prev.data.title}</h3>
+        </a>
+      ) : (
+        <span />
+      )
+    }
+    {
+      next && (
+        <a class="card align-end" href={`/lessons/${lessonSlug(next)}`}>
+          <span class="meta">Week {next.data.week} →</span>
+          <h3>{next.data.title}</h3>
+        </a>
+      )
+    }
+  </nav>
+</Base>
+
+<style>
+  .head-meta {
+    margin-top: 24px;
+  }
+  .on-dark-chip {
+    background: var(--green-800);
+    color: var(--cream);
+    border-color: var(--green-700);
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: clamp(32px, 5vw, 64px);
+    align-items: start;
+  }
+  .objectives {
+    padding: 22px 26px;
+    margin-bottom: 36px;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .objectives ul {
+    margin: 0;
+  }
+  .hw {
+    position: sticky;
+    top: 92px;
+    padding: 28px;
+    background: var(--green-900);
+    color: var(--cream);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lift);
+  }
+  .hw .eyebrow {
+    color: var(--gold);
+    margin: 0;
+  }
+  .hw h2 {
+    font-size: 1.6rem;
+    margin: 12px 0 6px;
+  }
+  .hw h3 {
+    font-size: 1rem;
+    margin: 18px 0 6px;
+    color: var(--gold-soft);
+  }
+  .hw .muted,
+  .hw p,
+  .hw li {
+    color: var(--mint);
+  }
+  .hw ul {
+    padding-left: 1.2em;
+    margin: 0;
+  }
+  .hw li::marker {
+    color: var(--gold);
+  }
+  .hw .due {
+    margin: 20px 0 14px;
+    font: 500 0.9rem var(--font-mono);
+    color: var(--gold-soft);
+  }
+  .full {
+    width: 100%;
+    justify-content: center;
+  }
+  .between {
+    justify-content: space-between;
+  }
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding-bottom: 72px;
+  }
+  .align-end {
+    text-align: right;
+  }
+  @media (max-width: 900px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+    .hw {
+      position: static;
+    }
+  }
+</style>

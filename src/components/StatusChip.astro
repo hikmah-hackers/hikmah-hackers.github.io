@@ -1,0 +1,10 @@
+---
+import { DUE_LABEL, dueStatus } from '../lib/dates';
+
+interface Props {
+  due: string;
+}
+const status = dueStatus(Astro.props.due);
+---
+
+<span class={`chip chip-${status}`}>{DUE_LABEL[status]}</span>

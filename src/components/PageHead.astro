@@ -1,0 +1,26 @@
+---
+import NetworkBackdrop from './NetworkBackdrop.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+}
+const { eyebrow, title, lede } = Astro.props;
+---
+
+<section class="page-head on-dark">
+  <NetworkBackdrop />
+  <div class="wrap inner">
+    {eyebrow && <p class="eyebrow rise" style="--i:0">{eyebrow}</p>}
+    <h1 class="rise" style="--i:1">{title}</h1>
+    {lede && <p class="lede rise" style="--i:2">{lede}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .inner {
+    position: relative;
+  }
+</style>

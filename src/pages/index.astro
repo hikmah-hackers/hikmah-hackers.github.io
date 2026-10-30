@@ -1,0 +1,317 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import StatusChip from '../components/StatusChip.astro';
+import AnnouncementList from '../components/AnnouncementList.astro';
+import { getAnnouncements, getCurrentLesson, getNextLesson, getShowcase, lessonSlug } from '../lib/content';
+import { formatDate } from '../lib/dates';
+import { SITE } from '../site';
+
+const current = await getCurrentLesson();
+const next = await getNextLesson();
+const announcements = (await getAnnouncements()).slice(0, 3);
+const showcase = (await getShowcase()).slice(0, 3);
+const currentHref = current ? `/lessons/${lessonSlug(current)}` : '/lessons';
+
+const steps = [
+  { title: `Learn on ${SITE.classDay}`, body: 'A short, hands-on lesson. We type real code together and run it right away.' },
+  { title: 'Build at home', body: 'A small mini-project each week. About 20–30 minutes, plus a bonus if you want more.' },
+  { title: 'Submit & show', body: 'Send your code from this site. Next class, a few students show what they made.' },
+];
+
+const year = [
+  { label: 'Python basics', detail: 'print, variables, input, math' },
+  { label: 'Decisions & loops', detail: 'Choose-your-own-adventure, guessing games' },
+  { label: 'Lists & functions', detail: 'Quiz games and bigger programs' },
+  { label: 'Real tools', detail: 'VS Code and GitHub' },
+  { label: 'Your website', detail: 'HTML & CSS, published live' },
+  { label: 'Compete', detail: 'Showcase and competitions for prizes' },
+];
+---
+
+<Base>
+  <Hero currentHref={currentHref} />
+
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>This week</p>
+      {
+        current ? (
+          <article class="this-week" data-reveal style="--i:1">
+            <div class="tw-main">
+              <p class="meta">
+                Week {current.data.week} · {formatDate(current.data.date)}
+              </p>
+              <h2>{current.data.title}</h2>
+              <p class="muted">{current.data.summary}</p>
+              <div class="row">
+                <a class="btn" href={currentHref}>
+                  Open the lesson <span class="arrow">→</span>
+                </a>
+                {current.data.slides && (
+                  <a class="btn btn-ghost" href={current.data.slides} target="_blank" rel="noopener">
+                    Slides ↗
+                  </a>
+                )}
+              </div>
+            </div>
+            {current.data.assignment && (
+              <aside class="tw-hw">
+                <div class="row between">
+                  <p class="eyebrow">Mini-project</p>
+                  <StatusChip due={current.data.assignment.due} />
+                </div>
+                <h3>{current.data.assignment.title}</h3>
+                <p>{current.data.assignment.summary}</p>
+                <p class="due">Due {formatDate(current.data.assignment.due)}</p>
+                <a class="btn btn-gold" href={`/submit?week=${current.data.week}`}>
+                  Submit it <span class="arrow">→</span>
+                </a>
+              </aside>
+            )}
+          </article>
+        ) : (
+          <div class="empty" data-reveal>
+            <h3>Classes start soon</h3>
+            <p>
+              {next ? `Week 1 opens ${formatDate(next.data.date)}.` : 'Check back soon for the first lesson.'}
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section steps-band">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>How it works</p>
+      <h2 data-reveal style="--i:1">One lesson. One mini-project. Every week.</h2>
+      <ol class="steps">
+        {
+          steps.map((step, i) => (
+            <li data-reveal style={`--i:${i + 1}`}>
+              <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow" data-reveal>News</p>
+        <h2 data-reveal style="--i:1">Announcements</h2>
+        <AnnouncementList items={announcements} compact />
+        <a class="more" href="/announcements" data-reveal>All announcements →</a>
+      </div>
+      <div>
+        <p class="eyebrow" data-reveal>The year ahead</p>
+        <h2 data-reveal style="--i:1">Where we’re going</h2>
+        <ol class="timeline">
+          {
+            year.map((stop, i) => (
+              <li data-reveal style={`--i:${i}`}>
+                <strong>{stop.label}</strong>
+                <span>{stop.detail}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  {
+    showcase.length > 0 && (
+      <section class="section on-dark showcase-band">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Showcase</p>
+          <h2 data-reveal style="--i:1">Made by Hikmah Hackers</h2>
+          <div class="grid">
+            {showcase.map((item, i) => (
+              <a class="card dark-card" href="/showcase" data-reveal style={`--i:${i}`}>
+                <span class="meta">{item.data.student}{item.data.week ? ` · Week ${item.data.week}` : ''}</span>
+                <h3>{item.data.title}</h3>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .this-week {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: calc(var(--radius) + 6px);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .tw-main {
+    padding: clamp(24px, 4vw, 44px);
+  }
+  .tw-main .meta {
+    font: 500 0.9rem var(--font-mono);
+    color: var(--gold-ink);
+    margin-bottom: 8px;
+  }
+  .tw-main h2 {
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+  }
+  .tw-main .muted {
+    margin-bottom: 24px;
+    max-width: 52ch;
+  }
+  .tw-hw {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: clamp(24px, 4vw, 40px);
+    background: var(--green-900);
+    color: var(--cream);
+  }
+  .tw-hw .eyebrow {
+    color: var(--gold);
+    margin: 0;
+  }
+  .tw-hw p {
+    color: var(--mint);
+    margin: 0;
+  }
+  .tw-hw h3 {
+    font-size: 1.6rem;
+    margin: 8px 0 4px;
+  }
+  .tw-hw .due {
+    margin: 10px 0 20px;
+    font: 500 0.9rem var(--font-mono);
+    color: var(--gold-soft);
+  }
+  .tw-hw .btn {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  .between {
+    justify-content: space-between;
+  }
+
+  .steps-band {
+    background: var(--cream-50);
+    border-block: 1px solid var(--line);
+  }
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 36px 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    counter-reset: step;
+  }
+  .steps li {
+    position: relative;
+    padding-top: 22px;
+    border-top: 2px solid var(--green-900);
+  }
+  .step-num {
+    font: 700 0.85rem var(--font-mono);
+    color: var(--gold-ink);
+  }
+  .steps h3 {
+    margin: 10px 0 8px;
+  }
+  .steps p {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(40px, 7vw, 88px);
+  }
+  .more {
+    display: inline-block;
+    margin-top: 20px;
+    font-weight: 600;
+    color: var(--green-700);
+    text-decoration: none;
+  }
+  .more:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--gold);
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0 0 0 26px;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    background: linear-gradient(var(--gold), var(--line));
+  }
+  .timeline li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0 14px;
+  }
+  .timeline li::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 16px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 3px solid var(--green-900);
+  }
+  .timeline li:first-child::before {
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 5px rgb(212 168 75 / 0.25);
+  }
+  .timeline strong {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+  }
+  .timeline span {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+
+  .dark-card {
+    background: var(--green-800);
+    border-color: var(--green-700);
+    color: var(--cream);
+  }
+  .dark-card .meta {
+    color: var(--gold);
+  }
+
+  @media (max-width: 860px) {
+    .this-week,
+    .split {
+      grid-template-columns: 1fr;
+    }
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

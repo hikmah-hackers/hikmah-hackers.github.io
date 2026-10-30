@@ -1,0 +1,175 @@
+---
+import { SITE } from '../site';
+import LogoMark from './LogoMark.astro';
+import NetworkBackdrop from './NetworkBackdrop.astro';
+
+interface Props {
+  currentHref?: string;
+}
+const { currentHref = '/lessons' } = Astro.props;
+const words = ['Learn', 'to', 'code.', 'Build', 'with', 'purpose.'];
+const code = 'print("Assalamu alaikum, world!")';
+const output = 'Assalamu alaikum, world!';
+---
+
+<section class="hero on-dark">
+  <NetworkBackdrop />
+  <div class="wrap grid-hero">
+    <div class="copy">
+      <p class="eyebrow rise" style="--i:0">{SITE.host} · Grades 7–10</p>
+      <h1 aria-label={SITE.tagline}>
+        {words.map((word, i) => <span class="word" style={`--i:${i + 1}`} aria-hidden="true">{word} </span>)}
+      </h1>
+      <p class="lede rise" style="--i:7">
+        Every {SITE.classDay} we learn real programming in Python, then build something small at home. By the end of the
+        year: games, your own website, and competitions.
+      </p>
+      <div class="row rise" style="--i:8">
+        <a href={currentHref} class="btn btn-gold">This week’s lesson <span class="arrow">→</span></a>
+        <a href="/submit" class="btn btn-ghost">Submit work</a>
+      </div>
+    </div>
+
+    <div class="visual" aria-hidden="true">
+      <div class="glow"></div>
+      <LogoMark size={260} animated class="mark" />
+      <div class="terminal">
+        <div class="dots"><i></i><i></i><i></i><span>main.py</span></div>
+        <code class="typed" style={`--chars:${code.length}`}>{code}</code>
+        <code class="out">{output}<span class="caret"></span></code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(56px, 10vw, 120px) clamp(64px, 10vw, 128px);
+  }
+  .grid-hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+    gap: clamp(32px, 6vw, 72px);
+  }
+  h1 {
+    margin-bottom: 0.35em;
+  }
+  .word {
+    display: inline-block;
+    white-space: pre;
+    animation: rise 0.9s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 85ms);
+  }
+  .word:nth-child(n + 4) {
+    color: var(--gold);
+  }
+  .lede {
+    margin-bottom: 32px;
+  }
+
+  .visual {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    min-height: 430px;
+    padding-top: 8px;
+  }
+  .glow {
+    position: absolute;
+    top: -40px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(212 168 75 / 0.22), transparent 65%);
+    animation: rise 1.6s var(--ease-out) both;
+  }
+  .visual :global(.mark) {
+    position: relative;
+    color: var(--cream);
+    filter: drop-shadow(0 18px 40px rgb(0 0 0 / 0.25));
+  }
+  .terminal {
+    position: absolute;
+    right: -8px;
+    bottom: 0;
+    width: min(100%, 360px);
+    display: grid;
+    gap: 6px;
+    padding: 14px 18px 18px;
+    background: rgb(10 42 33 / 0.92);
+    border: 1px solid var(--green-700);
+    border-radius: 14px;
+    box-shadow: var(--shadow-lift);
+    animation: rise 0.8s var(--ease-out) 1.9s both;
+  }
+  .dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    font: 500 0.72rem var(--font-mono);
+    color: var(--mint-dim);
+  }
+  .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--green-700);
+  }
+  .dots span {
+    margin-left: 6px;
+  }
+  code {
+    font-size: 0.82rem;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .typed {
+    width: 0;
+    color: var(--cream);
+    animation: type 1.6s steps(var(--chars)) 2.5s forwards;
+  }
+  .out {
+    color: var(--gold);
+    opacity: 0;
+    animation: rise 0.5s var(--ease-out) 4.3s forwards;
+  }
+  @keyframes type {
+    to {
+      width: calc(var(--chars) * 1ch);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .grid-hero {
+      grid-template-columns: 1fr;
+    }
+    .visual {
+      min-height: 320px;
+      order: -1;
+    }
+    .visual :global(.mark) {
+      width: 180px;
+      height: 180px;
+    }
+    .terminal {
+      right: 50%;
+      transform: translateX(50%);
+      bottom: 0;
+      animation-name: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .typed {
+      width: auto;
+    }
+    .out {
+      opacity: 1;
+    }
+  }
+</style>

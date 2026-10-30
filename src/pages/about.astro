@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { SITE } from '../site';
+
+const facts = [
+  { k: 'Who', v: 'Students in grades 7–10' },
+  { k: 'When', v: `Every ${SITE.classDay}${SITE.classTime ? `, ${SITE.classTime}` : ''}` },
+  { k: 'Where', v: SITE.host },
+  { k: 'Cost', v: 'Free' },
+  { k: 'Bring', v: 'A Chromebook or laptop. Nothing to install.' },
+];
+---
+
+<Base title="About & parents" description="About Hikmah Hackers, for students and families.">
+  <PageHead eyebrow="About" title="Wisdom, in code" lede="Hikmah means wisdom. We teach young Muslims to think clearly, solve problems, and build things that help people." />
+
+  <section class="section">
+    <div class="wrap about">
+      <div class="prose">
+        <h2>What students do</h2>
+        <p>
+          Each week starts with a short, hands-on lesson. Students type real Python code, run it, and fix their own mistakes.
+          At home they finish a small mini-project (about 20–30 minutes) and submit it on this website.
+        </p>
+        <p>
+          Over the year we go from the very first line of code to games, then to the real tools programmers use, and finally to
+          each student publishing their own website. Along the way we enter coding competitions for prizes.
+        </p>
+        <h2>For parents & guardians</h2>
+        <ul>
+          <li>Everything runs in the browser. Students don’t need to install anything or create accounts.</li>
+          <li>Submitted work is stored privately. Only teachers can see it.</li>
+          <li>The showcase only uses first names, and only for projects we pick.</li>
+          <li>A good way to help: ask your child to show you what they built this week.</li>
+        </ul>
+        <h2>Questions?</h2>
+        <p>
+          Talk to any madrasa teacher or staff member, or email <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.
+        </p>
+      </div>
+      <dl class="facts card" data-reveal>
+        {
+          facts.map((fact) => (
+            <div>
+              <dt>{fact.k}</dt>
+              <dd>{fact.v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: clamp(32px, 6vw, 72px);
+    align-items: start;
+  }
+  .prose h2:first-child {
+    margin-top: 0;
+  }
+  .facts {
+    margin: 0;
+    position: sticky;
+    top: 92px;
+    gap: 0;
+    padding: 8px 24px;
+  }
+  .facts div {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .facts div:last-child {
+    border-bottom: 0;
+  }
+  dt {
+    font: 600 0.75rem var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-ink);
+  }
+  dd {
+    margin: 4px 0 0;
+    font-weight: 600;
+  }
+  @media (max-width: 860px) {
+    .about {
+      grid-template-columns: 1fr;
+    }
+    .facts {
+      position: static;
+    }
+  }
+</style>

@@ -1,0 +1,279 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { getAssignments } from '../lib/content';
+import { GRADES, LIMITS } from '../lib/submission-rules';
+import { formatDate } from '../lib/dates';
+import { SITE } from '../site';
+
+const assignments = await getAssignments();
+const weeks = assignments.map((lesson) => lesson.data.week);
+const isOpen = SITE.submitEndpoint.length > 0;
+---
+
+<Base title="Submit work" description="Turn in your weekly mini-project.">
+  <PageHead
+    eyebrow="Submit"
+    title="Turn in your mini-project"
+    lede="Paste your code (or choose your .py file), fill in your name, and press Submit. You can resubmit as many times as you like. The newest one counts."
+  />
+
+  <section class="section">
+    <div class="wrap layout">
+      <form
+        id="submit-form"
+        class="form card"
+        method="post"
+        action="javascript:void 0"
+        novalidate
+        data-endpoint={SITE.submitEndpoint}
+        data-weeks={weeks.join(',')}
+      >
+        {
+          !isOpen && (
+            <p class="notice" role="note">
+              Submissions open soon. You can still fill this in. Your code is saved on this computer as you type.
+            </p>
+          )
+        }
+
+        <div class="two">
+          <div class="field">
+            <label for="f-firstName">First name</label>
+            <input id="f-firstName" name="firstName" autocomplete="given-name" maxlength={LIMITS.nameMax} required aria-describedby="err-firstName" />
+            <small id="err-firstName" class="err" data-error-for="firstName" aria-live="polite"></small>
+          </div>
+          <div class="field">
+            <label for="f-lastName">Last name</label>
+            <input id="f-lastName" name="lastName" autocomplete="family-name" maxlength={LIMITS.nameMax} required aria-describedby="err-lastName" />
+            <small id="err-lastName" class="err" data-error-for="lastName" aria-live="polite"></small>
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="f-grade">Grade</label>
+            <select id="f-grade" name="grade" required aria-describedby="err-grade">
+              <option value="">Choose…</option>
+              {GRADES.map((grade) => <option value={grade}>Grade {grade}</option>)}
+            </select>
+            <small id="err-grade" class="err" data-error-for="grade" aria-live="polite"></small>
+          </div>
+          <div class="field">
+            <label for="f-week">Which week?</label>
+            <select id="f-week" name="week" required aria-describedby="err-week">
+              {assignments.length === 0 && <option value="">No assignments yet</option>}
+              {
+                assignments.map((lesson) => (
+                  <option value={lesson.data.week}>
+                    Week {lesson.data.week}: {lesson.data.assignment!.title} (due{' '}
+                    {formatDate(lesson.data.assignment!.due, 'short')})
+                  </option>
+                ))
+              }
+            </select>
+            <small id="err-week" class="err" data-error-for="week" aria-live="polite"></small>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-code">Your code</label>
+          <textarea
+            id="f-code"
+            name="code"
+            rows="14"
+            spellcheck="false"
+            autocapitalize="off"
+            autocomplete="off"
+            placeholder={'print("My name is ...")'}
+            aria-describedby="err-code"></textarea>
+          <small id="err-code" class="err" data-error-for="code" aria-live="polite"></small>
+        </div>
+
+        <div class="field file">
+          <label for="f-file">…or choose a file</label>
+          <input id="f-file" type="file" name="file" accept=".py,.txt,text/plain,text/x-python" />
+        </div>
+
+        <div class="field">
+          <label for="f-note">Note for your teacher <em>(optional)</em></label>
+          <input id="f-note" name="note" maxlength={LIMITS.noteMax} placeholder="Anything you got stuck on?" aria-describedby="err-note" />
+          <small id="err-note" class="err" data-error-for="note" aria-live="polite"></small>
+        </div>
+
+        <div class="field">
+          <label for="f-passcode">Class passcode</label>
+          <input id="f-passcode" name="passcode" type="password" autocomplete="off" maxlength={LIMITS.passcodeMax} required aria-describedby="err-passcode" />
+          <small id="err-passcode" class="err" data-error-for="passcode" aria-live="polite"></small>
+        </div>
+
+        <!-- Enabled by the script, so the form never submits without it. -->
+        <button type="submit" class="btn btn-gold submit-btn" disabled><span class="label">Submit</span> <span class="arrow">→</span></button>
+        <div id="submit-status" class="status" role="status" tabindex="-1" hidden></div>
+      </form>
+
+      <aside class="tips" data-reveal>
+        <p class="eyebrow">Before you submit</p>
+        <ol>
+          <li>Press <strong>Run</strong> one last time. Does it work?</li>
+          <li>Click in your code, press <kbd>Ctrl</kbd> + <kbd>A</kbd>, then <kbd>Ctrl</kbd> + <kbd>C</kbd>.</li>
+          <li>Click in the code box here and press <kbd>Ctrl</kbd> + <kbd>V</kbd>.</li>
+          <li>Use the same name every week so your work stays together.</li>
+        </ol>
+        <p class="muted small">Your code goes to a private folder only your teacher can see.</p>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initSubmitForm } from '../scripts/submit-form';
+  const form = document.getElementById('submit-form');
+  if (form instanceof HTMLFormElement) initSubmitForm(form);
+</script>
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: clamp(28px, 5vw, 56px);
+    align-items: start;
+  }
+  .form {
+    gap: 20px;
+    padding: clamp(22px, 4vw, 36px);
+    box-shadow: var(--shadow);
+  }
+  .two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field label {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .field em {
+    font-weight: 400;
+    color: var(--ink-soft);
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    font: inherit;
+    color: var(--ink);
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 11px 13px;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--green-700);
+    box-shadow: 0 0 0 4px rgb(212 168 75 / 0.35);
+  }
+  textarea {
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    resize: vertical;
+    background: var(--green-950);
+    color: var(--cream);
+    border-color: var(--green-800);
+    tab-size: 4;
+  }
+  textarea::placeholder {
+    color: var(--mint-dim);
+  }
+  [aria-invalid='true'] {
+    border-color: var(--danger);
+  }
+  .err {
+    min-height: 1.2em;
+    color: var(--danger);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .file input {
+    padding: 9px;
+    background: var(--cream);
+    border-style: dashed;
+  }
+  .submit-btn {
+    justify-content: center;
+    font-size: 1.1rem;
+    padding: 16px;
+  }
+  .notice {
+    margin: 0;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    background: #fbefd2;
+    color: var(--gold-ink);
+    font-weight: 600;
+  }
+  .status {
+    padding: 16px 18px;
+    border-radius: var(--radius-sm);
+    animation: rise 0.4s var(--ease-out);
+  }
+  .status:focus {
+    outline: none;
+  }
+  .status :global(p) {
+    margin: 4px 0 0;
+  }
+  .status[data-kind='success'] {
+    background: #e3efe8;
+    color: #1d5a43;
+    border: 1px solid #c4dccf;
+  }
+  .status[data-kind='error'] {
+    background: #fbe7dc;
+    color: var(--danger);
+    border: 1px solid #f1c9b4;
+  }
+  .status[data-kind='info'] {
+    background: #fbefd2;
+    color: var(--gold-ink);
+  }
+  .tips {
+    position: sticky;
+    top: 92px;
+    padding: 24px;
+    border-radius: var(--radius);
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+  }
+  .tips ol {
+    padding-left: 1.2em;
+    margin: 0 0 14px;
+  }
+  .tips li {
+    margin-bottom: 10px;
+  }
+  .small {
+    font-size: 0.88rem;
+    margin: 0;
+  }
+  @media (max-width: 860px) {
+    .layout,
+    .two {
+      grid-template-columns: 1fr;
+    }
+    .tips {
+      position: static;
+    }
+  }
+</style>

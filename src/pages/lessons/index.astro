@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import LessonCard from '../../components/LessonCard.astro';
+import { getAllLessons, type Lesson } from '../../lib/content';
+
+const lessons = await getAllLessons();
+
+/** Group lessons by unit, keeping the order units first appear in. */
+const units = lessons.reduce<{ name: string; lessons: Lesson[] }[]>((groups, lesson) => {
+  const last = groups.at(-1);
+  return last && last.name === lesson.data.unit
+    ? [...groups.slice(0, -1), { ...last, lessons: [...last.lessons, lesson] }]
+    : [...groups, { name: lesson.data.unit, lessons: [lesson] }];
+}, []);
+---
+
+<Base title="Lessons" description="Every Hikmah Hackers lesson, week by week.">
+  <PageHead
+    eyebrow="Lessons"
+    title="Week by week"
+    lede="Each lesson has the slides, the code we wrote together, and that week’s mini-project. New lessons open on their class day."
+  />
+
+  <section class="section">
+    <div class="wrap stack-units">
+      {lessons.length === 0 && <div class="empty">The first lesson will appear here on class day.</div>}
+      {
+        units.map((unit, u) => (
+          <section class="unit">
+            <header class="unit-head" data-reveal>
+              <span class="unit-num">Unit {u + 1}</span>
+              <h2>{unit.name}</h2>
+            </header>
+            <div class="grid">
+              {unit.lessons.map((lesson, i) => (
+                <LessonCard lesson={lesson} index={i} />
+              ))}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .stack-units {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+  .unit-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .unit-head h2 {
+    margin: 0;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+  .unit-num {
+    font: 600 0.8rem var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-ink);
+    white-space: nowrap;
+  }
+</style>

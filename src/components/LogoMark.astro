@@ -1,0 +1,64 @@
+---
+/** The Hikmah Hackers arch + prompt mark, as inline SVG (no extra request). */
+interface Props {
+  size?: number;
+  animated?: boolean;
+  class?: string;
+}
+const { size = 36, animated = false, class: className = '' } = Astro.props;
+---
+
+<svg
+  class:list={['logo-mark', { 'is-animated': animated }, className]}
+  width={size}
+  height={size}
+  viewBox="120 60 272 360"
+  aria-hidden="true"
+  focusable="false"
+>
+  <circle class="dot" cx="256" cy="80" r="12" fill="currentColor"></circle>
+  <path
+    class="arch"
+    d="M156 404 V252 C156 184 206 142 256 110 C306 142 356 184 356 252 V404"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="24"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    pathLength="1"></path>
+  <path
+    class="chevron"
+    d="M208 258 L246 288 L208 318"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="22"
+    stroke-linecap="round"
+    stroke-linejoin="round"></path>
+  <path class="cursor" d="M262 318 H304" fill="none" stroke="var(--gold)" stroke-width="22" stroke-linecap="round"></path>
+</svg>
+
+<style>
+  .logo-mark {
+    flex: none;
+    overflow: visible;
+  }
+  .cursor {
+    animation: blink 1.05s steps(1) infinite;
+  }
+  .is-animated .arch {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 1.8s var(--ease-out) 0.2s forwards;
+  }
+  .is-animated .dot,
+  .is-animated .chevron {
+    opacity: 0;
+    animation: rise 0.7s var(--ease-out) forwards;
+  }
+  .is-animated .dot {
+    animation-delay: 1.5s;
+  }
+  .is-animated .chevron {
+    animation-delay: 1.1s;
+  }
+</style>

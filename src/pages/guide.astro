@@ -1,0 +1,206 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { CHEATSHEET, COMMON_ERRORS } from '../data/cheatsheet';
+import { SITE } from '../site';
+
+const setupSteps = [
+  { title: 'Open Chrome', body: 'On your Chromebook, open the Chrome browser.' },
+  { title: 'Go to the editor', body: `Open the ${SITE.editor.name}. Bookmark it with Ctrl + D so it’s one click next time.` },
+  { title: 'Clear the box', body: 'Delete any example code that’s already there.' },
+  { title: 'Type and Run', body: 'Write your code on the left, press Run, and the output appears on the right.' },
+];
+---
+
+<Base title="Guide" description="Chromebook setup, how to save your work, and a Python cheat sheet.">
+  <PageHead eyebrow="Guide" title="Setup & cheat sheet" lede="Everything you need to code on a school Chromebook: no installs, no accounts.">
+    <nav class="row jump rise" style="--i:3" aria-label="On this page">
+      <a href="#setup" class="btn btn-gold">Setup</a>
+      <a href="#saving" class="btn btn-ghost">Saving</a>
+      <a href="#cheatsheet" class="btn btn-ghost">Cheat sheet</a>
+      <a href="#errors" class="btn btn-ghost">Errors</a>
+    </nav>
+  </PageHead>
+
+  <section class="section" id="setup">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Setup</p>
+      <h2 data-reveal style="--i:1">Open the Python editor</h2>
+      <ol class="setup">
+        {
+          setupSteps.map((step, i) => (
+            <li class="card" data-reveal style={`--i:${i}`}>
+              <span class="n">{i + 1}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="row editor-links" data-reveal>
+        <a class="btn" href={SITE.editor.url} target="_blank" rel="noopener">Open the editor ↗</a>
+        <span class="muted">
+          Blocked or not loading? Try the backup:
+          <a href={SITE.backupEditor.url} target="_blank" rel="noopener">{SITE.backupEditor.name}</a>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section band" id="saving">
+    <div class="wrap save">
+      <div>
+        <p class="eyebrow" data-reveal>Saving</p>
+        <h2 data-reveal style="--i:1">The editor doesn’t save. You do.</h2>
+        <p class="lede" data-reveal style="--i:2">
+          Keep one Google Doc called <strong>Hikmah Hackers – My Code</strong>. Add a heading for each week and paste your code
+          under it.
+        </p>
+      </div>
+      <ol class="keys" data-reveal style="--i:2">
+        <li><kbd>Ctrl</kbd> + <kbd>A</kbd><span>Select all your code</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>C</kbd><span>Copy it</span></li>
+        <li><kbd>Ctrl</kbd> + <kbd>V</kbd><span>Paste into your Google Doc</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="cheatsheet">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Cheat sheet</p>
+      <h2 data-reveal style="--i:1">Python at a glance</h2>
+      <div class="cheats">
+        {
+          CHEATSHEET.map((item, i) => (
+            <article class="cheat" data-reveal style={`--i:${i % 3}`}>
+              <h3>{item.title}</h3>
+              <pre class="code"><code>{item.code}</code></pre>
+              <p>{item.note}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section band" id="errors">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Errors</p>
+      <h2 data-reveal style="--i:1">Red text? Don’t panic.</h2>
+      <p class="lede" data-reveal style="--i:2">Read the last line of the error first. It usually names the problem and the line number.</p>
+      <div class="errors">
+        {
+          COMMON_ERRORS.map((row, i) => (
+            <div class="card err" data-reveal style={`--i:${i}`}>
+              <code class="name">{row.error}</code>
+              <p>
+                <strong>{row.meaning}</strong> {row.fix}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .jump {
+    margin-top: 28px;
+  }
+  .jump .btn {
+    padding: 10px 18px;
+  }
+  .setup {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+    gap: 18px;
+  }
+  .n {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--green-900);
+    color: var(--gold);
+    font: 700 1.1rem var(--font-display);
+  }
+  .editor-links a:not(.btn) {
+    color: var(--green-700);
+    font-weight: 600;
+  }
+  .band {
+    background: var(--cream-50);
+    border-block: 1px solid var(--line);
+  }
+  .save {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .keys {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .keys li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    background: var(--green-900);
+    color: var(--cream);
+    border-radius: var(--radius-sm);
+  }
+  .keys kbd {
+    background: var(--green-800);
+    border-color: var(--green-700);
+    color: var(--gold);
+  }
+  .keys span {
+    margin-left: auto;
+    color: var(--mint);
+  }
+  .cheats {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 24px;
+  }
+  .cheat h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  .cheat pre {
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+  }
+  .cheat p {
+    color: var(--ink-soft);
+    font-size: 0.93rem;
+    margin: 0;
+  }
+  .errors {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: 16px;
+  }
+  .name {
+    font-weight: 700;
+    color: var(--danger);
+  }
+  @media (max-width: 860px) {
+    .save {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+import { NAV, SITE } from '../site';
+import LogoMark from './LogoMark.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer on-dark">
+  <div class="wrap cols">
+    <div class="about">
+      <div class="row brandline">
+        <LogoMark size={30} />
+        <strong>{SITE.name}</strong>
+      </div>
+      <p>{SITE.description}</p>
+    </div>
+    <nav aria-label="Footer">
+      <p class="eyebrow">Explore</p>
+      {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+      <a href="/submit">Submit work</a>
+      <a href="/about">About &amp; parents</a>
+    </nav>
+    <div>
+      <p class="eyebrow">Contact</p>
+      <p>
+        Any madrasa teacher or staff member, or email<br />
+        <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>
+      </p>
+    </div>
+  </div>
+  <div class="wrap fine">
+    <span>© {year} {SITE.name} · {SITE.host}</span>
+    <span class="mono">&gt; built by students, for students<span class="caret"></span></span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--green-950);
+    padding-block: 64px 32px;
+    margin-top: auto;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.3fr;
+    gap: 40px;
+  }
+  .about p {
+    color: var(--mint);
+    max-width: 44ch;
+    margin-top: 14px;
+  }
+  .brandline {
+    color: var(--cream);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+  }
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  nav a,
+  .cols a {
+    color: var(--mint);
+    text-decoration: none;
+    width: fit-content;
+    transition: color 0.2s;
+  }
+  nav a:hover,
+  .cols a:hover {
+    color: var(--gold);
+  }
+  .cols p {
+    color: var(--mint);
+  }
+  .fine {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--green-800);
+    font-size: 0.85rem;
+    color: var(--mint-dim);
+  }
+  .mono {
+    font-family: var(--font-mono);
+  }
+  @media (max-width: 760px) {
+    .cols {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+  }
+</style>

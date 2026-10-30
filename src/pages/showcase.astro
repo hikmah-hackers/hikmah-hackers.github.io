@@ -1,0 +1,60 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { getShowcase } from '../lib/content';
+
+const items = await getShowcase();
+const rendered = await Promise.all(items.map(async (item) => ({ item, Content: (await render(item)).Content })));
+---
+
+<Base title="Showcase" description="Standout projects made by Hikmah Hackers students.">
+  <PageHead
+    eyebrow="Showcase"
+    title="Made by our students"
+    lede="Standout mini-projects picked each week. Keep building. Yours could be next."
+  />
+  <section class="section">
+    <div class="wrap">
+      {
+        items.length === 0 ? (
+          <div class="empty">Projects will appear here after the first mini-projects come in.</div>
+        ) : (
+          <div class="gallery">
+            {rendered.map(({ item, Content }, i) => (
+              <article class="card is-hoverable piece" data-reveal style={`--i:${i % 4}`}>
+                {item.data.draft && <span class="chip chip-due-soon">Draft: only visible in preview</span>}
+                <span class="meta">
+                  {item.data.student}
+                  {item.data.grade ? ` · Grade ${item.data.grade}` : ''}
+                  {item.data.week ? ` · Week ${item.data.week}` : ''}
+                </span>
+                <h3>{item.data.title}</h3>
+                <div class="prose body">
+                  <Content />
+                </div>
+              </article>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .gallery {
+    columns: 2 380px;
+    column-gap: 20px;
+  }
+  .piece {
+    break-inside: avoid;
+    margin-bottom: 20px;
+  }
+  .body {
+    color: var(--ink-soft);
+  }
+  .body :global(pre) {
+    margin-bottom: 0;
+  }
+</style>

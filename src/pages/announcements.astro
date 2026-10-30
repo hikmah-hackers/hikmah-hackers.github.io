@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import AnnouncementList from '../components/AnnouncementList.astro';
+import { getAnnouncements } from '../lib/content';
+
+const announcements = await getAnnouncements();
+---
+
+<Base title="News" description="Announcements for Hikmah Hackers students and families.">
+  <PageHead eyebrow="News" title="Announcements" lede="Schedule changes, competitions, and reminders. Check here before class." />
+  <section class="section">
+    <div class="wrap narrow">
+      <AnnouncementList items={announcements} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .narrow {
+    max-width: 780px;
+  }
+</style>

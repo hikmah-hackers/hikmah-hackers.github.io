@@ -1,0 +1,179 @@
+---
+import { NAV, SITE } from '../site';
+import LogoMark from './LogoMark.astro';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
+---
+
+<header class="site-header on-dark">
+  <div class="wrap bar">
+    <a href="/" class="brand" aria-label={`${SITE.name} home`}>
+      <LogoMark size={34} />
+      <span class="wordmark">
+        <span class="w1">Hikmah</span>
+        <span class="w2">Hackers</span>
+      </span>
+    </a>
+
+    <nav class="nav-desktop" aria-label="Main">
+      {links.map((link) => <a href={link.href} aria-current={link.active ? 'page' : undefined}>{link.label}</a>)}
+      <a href="/submit" class="btn btn-gold submit" aria-current={isActive('/submit') ? 'page' : undefined}>Submit</a>
+    </nav>
+
+    <details class="nav-mobile">
+      <summary aria-label="Menu"><span></span><span></span><span></span></summary>
+      <nav aria-label="Main (mobile)">
+        {links.map((link) => <a href={link.href} aria-current={link.active ? 'page' : undefined}>{link.label}</a>)}
+        <a href="/submit" class="btn btn-gold">Submit work</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(14 59 46 / 0.97);
+    border-bottom: 1px solid rgb(243 235 221 / 0.08);
+    view-transition-name: site-header;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 68px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--cream);
+  }
+  .wordmark {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+  .w1 {
+    font: 700 1.2rem/1 var(--font-display);
+  }
+  .w2 {
+    font: 600 0.62rem/1 var(--font-body);
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 4px;
+  }
+  .nav-desktop {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-desktop a:not(.btn) {
+    position: relative;
+    padding: 8px 12px;
+    color: var(--mint);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-desktop a:not(.btn)::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 2px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform 0.3s var(--ease-out);
+  }
+  .nav-desktop a:hover,
+  .nav-desktop a[aria-current='page'] {
+    color: var(--cream);
+  }
+  .nav-desktop a:hover::after,
+  .nav-desktop a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+  .submit {
+    margin-left: 10px;
+    padding: 10px 18px;
+  }
+
+  .nav-mobile {
+    display: none;
+    position: relative;
+  }
+  .nav-mobile summary {
+    list-style: none;
+    cursor: pointer;
+    display: grid;
+    gap: 5px;
+    padding: 10px;
+  }
+  .nav-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+  .nav-mobile summary span {
+    width: 22px;
+    height: 2px;
+    background: var(--cream);
+    border-radius: 2px;
+    transition: transform 0.3s var(--ease-out), opacity 0.2s;
+  }
+  .nav-mobile[open] summary span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav-mobile[open] summary span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-mobile[open] summary span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  .nav-mobile nav {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px;
+    background: var(--green-950);
+    border: 1px solid var(--green-800);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lift);
+    animation: rise 0.3s var(--ease-out);
+  }
+  .nav-mobile nav a:not(.btn) {
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--mint);
+    text-decoration: none;
+  }
+  .nav-mobile nav a[aria-current='page'] {
+    color: var(--gold);
+    background: var(--green-800);
+  }
+  .nav-mobile .btn {
+    margin-top: 8px;
+    justify-content: center;
+  }
+
+  @media (max-width: 860px) {
+    .nav-desktop {
+      display: none;
+    }
+    .nav-mobile {
+      display: block;
+    }
+  }
+</style>

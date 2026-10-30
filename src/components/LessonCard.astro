@@ -1,0 +1,70 @@
+---
+import { isReleased, lessonSlug, type Lesson } from '../lib/content';
+import { formatDate } from '../lib/dates';
+
+interface Props {
+  lesson: Lesson;
+  index?: number;
+}
+const { lesson, index = 0 } = Astro.props;
+const { week, title, date, summary } = lesson.data;
+const released = isReleased(lesson);
+const href = `/lessons/${lessonSlug(lesson)}`;
+const linkable = released || import.meta.env.DEV;
+const Tag = linkable ? 'a' : 'div';
+---
+
+<Tag
+  href={linkable ? href : undefined}
+  class:list={['card', 'lesson-card', { 'is-locked': !released }]}
+  data-reveal
+  style={`--i:${index % 6}`}
+>
+  <div class="top">
+    <span class="num" aria-hidden="true">{String(week).padStart(2, '0')}</span>
+    {released ? <span class="meta">{formatDate(date, 'short')}</span> : <span class="chip chip-locked">Opens {formatDate(date, 'short')}</span>}
+  </div>
+  <h3><span class="sr-only">Week {week}: </span>{title}</h3>
+  <p>{summary}</p>
+  {linkable && <span class="go" aria-hidden="true">Open lesson →</span>}
+</Tag>
+
+<style>
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .num {
+    font: 700 2.4rem/1 var(--font-display);
+    color: var(--green-900);
+    letter-spacing: -0.03em;
+  }
+  .num::before {
+    content: 'WK';
+    font: 600 0.7rem/1 var(--font-mono);
+    letter-spacing: 0.1em;
+    color: var(--gold-ink);
+    margin-right: 6px;
+    vertical-align: 0.9em;
+  }
+  .go {
+    margin-top: auto;
+    padding-top: 8px;
+    font-weight: 600;
+    color: var(--green-700);
+    transition: transform 0.3s var(--ease-out);
+  }
+  a:hover .go {
+    transform: translateX(4px);
+  }
+  .is-locked {
+    background: transparent;
+    border-style: dashed;
+  }
+  .is-locked .num,
+  .is-locked h3 {
+    color: var(--ink-soft);
+  }
+</style>
