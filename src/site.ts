@@ -37,3 +37,10 @@ export const NAV = [
   { href: '/guide', label: 'Guide' },
   { href: '/portal', label: 'My work' },
 ] as const;
+
+export const LEGAL = [
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/terms', label: 'Terms' },
+  { href: '/code-of-conduct', label: 'Code of conduct' },
+  { href: '/accessibility', label: 'Accessibility' },
+] as const;

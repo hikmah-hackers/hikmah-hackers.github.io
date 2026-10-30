@@ -1,0 +1,91 @@
+---
+import Base from './Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { formatDate } from '../lib/dates';
+
+/** Layout for the Markdown policy pages in src/pages (privacy, terms, conduct, accessibility). */
+interface Props {
+  frontmatter: {
+    title: string;
+    lede: string;
+    updated: string | Date;
+  };
+}
+const { title, lede, updated: rawUpdated } = Astro.props.frontmatter;
+// YAML reads an unquoted 2026-10-30 as a Date; normalize to 'YYYY-MM-DD'.
+const updated = new Date(rawUpdated).toISOString().slice(0, 10);
+
+const policies = [
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/terms', label: 'Terms of use' },
+  { href: '/code-of-conduct', label: 'Code of conduct' },
+  { href: '/accessibility', label: 'Accessibility' },
+];
+const path = Astro.url.pathname.replace(/\/$/, '');
+---
+
+<Base title={title} description={lede}>
+  <PageHead eyebrow="Policies" title={title} lede={lede}>
+    <p class="updated rise" style="--i:3">Last updated {formatDate(updated)}</p>
+  </PageHead>
+
+  <section class="section">
+    <div class="wrap layout">
+      <nav class="side" aria-label="Policies">
+        {policies.map((p) => <a href={p.href} aria-current={path === p.href ? 'page' : undefined}>{p.label}</a>)}
+      </nav>
+      <article class="prose">
+        <slot />
+      </article>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .updated {
+    margin: 20px 0 0;
+    font: 500 0.85rem var(--font-mono);
+    color: var(--mint-dim);
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: clamp(28px, 6vw, 72px);
+    align-items: start;
+  }
+  .side {
+    position: sticky;
+    top: 92px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .side a {
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .side a:hover {
+    background: var(--cream-50);
+    color: var(--ink);
+  }
+  .side a[aria-current='page'] {
+    background: var(--green-900);
+    color: var(--cream);
+  }
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+  @media (max-width: 760px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+    .side {
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+</style>

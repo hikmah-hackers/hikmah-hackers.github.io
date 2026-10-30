@@ -1,5 +1,5 @@
 ---
-import { NAV, SITE } from '../site';
+import { LEGAL, NAV, SITE } from '../site';
 import LogoMark from './LogoMark.astro';
 
 const year = new Date().getFullYear();
@@ -30,6 +30,9 @@ const year = new Date().getFullYear();
   </div>
   <div class="wrap fine">
     <span>© {year} {SITE.name} · {SITE.host}</span>
+    <nav class="legal" aria-label="Policies">
+      {LEGAL.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
     <span class="mono">&gt; built by students, for students<span class="caret"></span></span>
   </div>
 </footer>
@@ -87,6 +90,15 @@ const year = new Date().getFullYear();
   }
   .mono {
     font-family: var(--font-mono);
+  }
+  .legal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+  .legal a {
+    color: var(--mint-dim);
+    font-size: 0.85rem;
   }
   @media (max-width: 760px) {
     .cols {

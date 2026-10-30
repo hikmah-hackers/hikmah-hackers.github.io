@@ -37,6 +37,10 @@ const { title = 'Log in with your student code', lede = 'It’s on the card your
   <!-- Enabled by the script, so the form never submits without it. -->
   <button type="submit" class="btn btn-gold" disabled><span class="label">Log in</span> <span class="arrow">→</span></button>
   <p class="help">Lost your code? Ask your teacher for a new card.</p>
+  <p class="help legal">
+    By logging in you agree to our <a href="/terms">Terms</a> and <a href="/code-of-conduct">Code of Conduct</a>. See how we
+    protect your information in our <a href="/privacy">Privacy Policy</a>.
+  </p>
 </form>
 
 <style>
@@ -113,6 +117,13 @@ const { title = 'Log in with your student code', lede = 'It’s on the card your
     margin: 4px 0 0;
     font-size: 0.85rem;
     color: var(--ink-soft);
+  }
+  .legal {
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+  .legal a {
+    color: var(--green-700);
   }
   @keyframes shake {
     25% {
