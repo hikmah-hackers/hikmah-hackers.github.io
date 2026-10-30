@@ -5,6 +5,7 @@ import PageHead from '../../components/PageHead.astro';
 import StatusChip from '../../components/StatusChip.astro';
 import SlideViewer from '../../components/SlideViewer.astro';
 import { getDeck } from '../../lib/decks';
+import { SITE } from '../../site';
 import { getPublishedLessons, isReleased, lessonSlug, type Lesson } from '../../lib/content';
 import { formatDate } from '../../lib/dates';
 
@@ -39,6 +40,9 @@ const { Content } = await render(lesson);
           </a>
         )
       }
+      <a class="btn btn-ghost" href={SITE.editor.url} target="_blank" rel="noopener">
+        Open Python editor ↗
+      </a>
     </div>
   </PageHead>
 

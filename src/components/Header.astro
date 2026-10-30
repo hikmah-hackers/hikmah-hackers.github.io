@@ -19,6 +19,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
 
     <nav class="nav-desktop" aria-label="Main">
       {links.map((link) => <a href={link.href} aria-current={link.active ? 'page' : undefined}>{link.label}</a>)}
+      <a href={SITE.editor.url} class="btn btn-ghost editor" target="_blank" rel="noopener" title={`Open the ${SITE.editor.name} in a new tab`}>Python editor ↗</a>
       <a href="/submit" class="btn btn-gold submit" aria-current={isActive('/submit') ? 'page' : undefined}>Submit</a>
     </nav>
 
@@ -26,6 +27,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
       <summary aria-label="Menu"><span></span><span></span><span></span></summary>
       <nav aria-label="Main (mobile)">
         {links.map((link) => <a href={link.href} aria-current={link.active ? 'page' : undefined}>{link.label}</a>)}
+        <a href={SITE.editor.url} class="btn btn-ghost" target="_blank" rel="noopener">Python editor ↗</a>
         <a href="/submit" class="btn btn-gold">Submit work</a>
       </nav>
     </details>
@@ -103,9 +105,17 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
   .nav-desktop a[aria-current='page']::after {
     transform: scaleX(1);
   }
-  .submit {
-    margin-left: 10px;
+  .submit,
+  .editor {
     padding: 10px 18px;
+  }
+  .editor {
+    margin-left: 10px;
+    color: var(--cream);
+    border-color: rgb(243 235 221 / 0.35);
+  }
+  .editor:hover {
+    border-color: var(--gold);
   }
 
   .nav-mobile {
@@ -168,7 +178,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
     justify-content: center;
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1100px) {
     .nav-desktop {
       display: none;
     }
