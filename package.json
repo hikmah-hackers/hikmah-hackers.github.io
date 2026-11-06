@@ -8,7 +8,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "slides": "node scripts/export-slides.mjs"
+    "slides": "node scripts/export-slides.mjs",
+    "deck": "node scripts/build-deck.mjs",
+    "week": "node scripts/week.mjs"
   },
   "dependencies": {
     "@fontsource-variable/rubik": "^5.3.0",
@@ -17,6 +19,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "@types/node": "^26.6.6",
+    "pptxgenjs": "^4.0.1",
     "typescript": "^6.0.3"
   }
 }

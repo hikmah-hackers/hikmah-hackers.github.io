@@ -1,0 +1,62 @@
+﻿[
+    {
+        "file":  "slide-01.webp",
+        "text":  "Week 2: Variables - Boxes that remember things - DARUL ULOOM MICHIGAN · FRIDAYS"
+    },
+    {
+        "file":  "slide-02.webp",
+        "text":  "TODAY - Our plan for 40 minutes - Hikmah Hackers · Week 2"
+    },
+    {
+        "file":  "slide-03.webp",
+        "text":  "WARM-UP - Last week, we typed every fact by hand. - Problem"
+    },
+    {
+        "file":  "slide-04.webp",
+        "text":  "THE BIG IDEA - A variable is a box with a label on it. - 1"
+    },
+    {
+        "file":  "slide-05.webp",
+        "text":  "LET\u0027S CODE · TYPE ALONG - Your first variable - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-06.webp",
+        "text":  "QUOTES MATTER - Quotes or no quotes? - With quotes"
+    },
+    {
+        "file":  "slide-07.webp",
+        "text":  "TEXT VS NUMBERS - What\u0027s in the box? - Hikmah Hackers · Week 2"
+    },
+    {
+        "file":  "slide-08.webp",
+        "text":  "TEXT VS NUMBERS - Numbers can do math. Text can\u0027t. - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-09.webp",
+        "text":  "LET\u0027S CODE · TYPE ALONG - Printing variables with text - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-10.webp",
+        "text":  "LET\u0027S CODE · TYPE ALONG - Boxes can change - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-11.webp",
+        "text":  "NAMING RULES - Good names, bad names - Python cares about capitals: Name and name are two different boxes."
+    },
+    {
+        "file":  "slide-12.webp",
+        "text":  "YOUR TURN · 5 MIN - Your family\u0027s favourite meal - meal = \"kabsa\" cook = \"my mom\" day = \"Friday\" print(\"On\", day, cook, \"makes\", meal)"
+    },
+    {
+        "file":  "slide-13.webp",
+        "text":  "BUG HUNT - Four mistakes everyone makes - Hikmah Hackers · Week 2"
+    },
+    {
+        "file":  "slide-14.webp",
+        "text":  "MINI-PROJECT · DUE NEXT FRIDAY - My Profile Card - Required"
+    },
+    {
+        "file":  "slide-15.webp",
+        "text":  "NEXT FRIDAY - input(): let the user fill the box - name = input(\"What is your name? \") print(\"Salaam,\", name)"
+    }
+]
