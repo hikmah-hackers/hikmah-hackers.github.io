@@ -65,6 +65,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
     height: 68px;
   }
   .brand {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -89,11 +90,15 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
   .nav-desktop {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 2px;
+  }
+  .nav-desktop a {
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .nav-desktop a:not(.btn) {
     position: relative;
-    padding: 8px 12px;
+    padding: 8px 10px;
     color: var(--mint);
     text-decoration: none;
     font-weight: 500;
@@ -102,8 +107,8 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
   .nav-desktop a:not(.btn)::after {
     content: '';
     position: absolute;
-    left: 12px;
-    right: 12px;
+    left: 10px;
+    right: 10px;
     bottom: 2px;
     height: 2px;
     background: var(--gold);
@@ -122,7 +127,8 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
   .submit,
   .editor,
   .account {
-    padding: 10px 18px;
+    padding: 9px 16px;
+    margin-left: 6px;
   }
   .account {
     color: var(--cream);
@@ -133,7 +139,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
     border-color: var(--gold);
   }
   .editor {
-    margin-left: 10px;
+    margin-left: 14px;
     color: var(--cream);
     border-color: rgb(243 235 221 / 0.35);
   }
@@ -201,7 +207,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
     justify-content: center;
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 1180px) {
     .nav-desktop {
       display: none;
     }
