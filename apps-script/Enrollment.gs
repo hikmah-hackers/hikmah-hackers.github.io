@@ -47,7 +47,10 @@ var TERMS_QUESTION = {
 function ensureTermsQuestion(form) {
   var items = form.getItems();
   var exists = items.some(function (item) { return item.getTitle().trim() === TERMS_QUESTION.title; });
-  if (exists) return;
+  if (exists) {
+    console.log('The "' + TERMS_QUESTION.title + '" question is already on the form.');
+    return;
+  }
   var question = form.addCheckboxItem()
     .setTitle(TERMS_QUESTION.title)
     .setHelpText(TERMS_QUESTION.help)
