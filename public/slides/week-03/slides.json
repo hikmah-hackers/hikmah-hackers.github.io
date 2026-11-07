@@ -1,0 +1,58 @@
+﻿[
+    {
+        "file":  "slide-01.webp",
+        "text":  "Week 3: Asking Questions - input() lets the user fill the box - DARUL ULOOM MICHIGAN · FRIDAYS"
+    },
+    {
+        "file":  "slide-02.webp",
+        "text":  "TODAY - Our plan for 40 minutes - Hikmah Hackers · Week 3"
+    },
+    {
+        "file":  "slide-03.webp",
+        "text":  "WARM-UP - Last week, we filled every box ourselves. - Last week"
+    },
+    {
+        "file":  "slide-04.webp",
+        "text":  "THE BIG IDEA - input() is like a waiter taking your order. - Ask"
+    },
+    {
+        "file":  "slide-05.webp",
+        "text":  "LET\u0027S CODE · TYPE ALONG - Your first input() - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-06.webp",
+        "text":  "SMALL DETAIL, BIG DIFFERENCE - The space matters - No space"
+    },
+    {
+        "file":  "slide-07.webp",
+        "text":  "WATCH OUT - input() always gives you text - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-08.webp",
+        "text":  "LET\u0027S CODE · TYPE ALONG - The fix: int() - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-09.webp",
+        "text":  "TEXT VS NUMBERS - What ends up in the box? - Hikmah Hackers · Week 3"
+    },
+    {
+        "file":  "slide-10.webp",
+        "text":  "LET\u0027S BUILD - Salah counter - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-11.webp",
+        "text":  "YOUR TURN · 5 MIN - Plan the dates for iftar - guests = int(input(\"Guests? \")) dates = guests * 3 print(\"Buy\", dates, \"dates\")"
+    },
+    {
+        "file":  "slide-12.webp",
+        "text":  "BUG HUNT - Four mistakes everyone makes - Hikmah Hackers · Week 3"
+    },
+    {
+        "file":  "slide-13.webp",
+        "text":  "MINI-PROJECT · DUE NEXT FRIDAY - My Chat Bot - Required"
+    },
+    {
+        "file":  "slide-14.webp",
+        "text":  "NEXT FRIDAY - More math: boxes and leftovers - print(17 // 5) # 3 full boxes print(17 % 5) # 2 left over"
+    }
+]
