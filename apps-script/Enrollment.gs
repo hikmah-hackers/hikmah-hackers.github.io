@@ -31,9 +31,31 @@ function connectEnrollmentForm() {
   });
   if (!alreadyConnected) ScriptApp.newTrigger('onEnrollmentSubmit').forForm(form).onFormSubmit().create();
   form.setConfirmationMessage(SIGNUP_CONFIRMATION);
+  ensureTermsQuestion(form);
 
   var added = form.getResponses().filter(function (response) { return addEnrollmentToRoster(response); }).length;
   console.log((alreadyConnected ? 'Already connected.' : 'Connected to "' + form.getTitle() + '".') + ' Added ' + added + ' student(s) to the Roster.');
+}
+
+var TERMS_QUESTION = {
+  title: 'Terms of Use and Disclaimer',
+  help: 'Please read our Terms of Use, including the Disclaimer section: https://hikmah-hackers.github.io/terms#disclaimer',
+  choice: 'I am the parent/guardian. I have read and agree to the Terms of Use, including the Disclaimer, for my child.',
+};
+
+/** Adds the required Terms checkbox right after the consent question. Does nothing if it's already there. */
+function ensureTermsQuestion(form) {
+  var items = form.getItems();
+  var exists = items.some(function (item) { return item.getTitle().trim() === TERMS_QUESTION.title; });
+  if (exists) return;
+  var question = form.addCheckboxItem()
+    .setTitle(TERMS_QUESTION.title)
+    .setHelpText(TERMS_QUESTION.help)
+    .setChoiceValues([TERMS_QUESTION.choice])
+    .setRequired(true);
+  var consent = items.filter(function (item) { return item.getTitle().trim() === 'Parent/guardian consent'; })[0];
+  if (consent) form.moveItem(question.getIndex(), consent.getIndex() + 1);
+  console.log('Added the "' + TERMS_QUESTION.title + '" question to the form.');
 }
 
 /** Installable trigger: runs on every new enrollment. */

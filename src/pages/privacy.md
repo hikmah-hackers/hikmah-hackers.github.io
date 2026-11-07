@@ -2,7 +2,7 @@
 layout: ../layouts/Policy.astro
 title: Privacy Policy
 lede: What we collect, why, where it's kept, and how to ask us to change or delete it. Written for parents and students.
-updated: 2026-11-06
+updated: 2026-11-07
 ---
 
 ## The short version
@@ -24,6 +24,7 @@ A parent or guardian fills in the enrollment form, which asks for:
 - **About the parent or guardian:** name, relationship to the student, email, phone, and preferred way to be contacted.
 - **Background:** previous coding experience, which devices the student can use, internet reliability, how you heard about us, and anything else you choose to tell us.
 - **Consent:** confirmation that a parent or guardian agrees to the student joining.
+- **Terms:** confirmation that the parent or guardian has read and agrees to our [Terms of Use](/terms), including the Disclaimer.
 
 The website's **Sign up** page links to this form. When it's submitted, the student is added to the class roster and their **student code is emailed automatically** to the parent/guardian email, and to the student email if one was given. We note on the roster when and where the code was sent. We use these email addresses only for class matters, never for marketing.
 
