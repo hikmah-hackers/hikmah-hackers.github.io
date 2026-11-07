@@ -30,7 +30,7 @@ const year = new Date().getFullYear();
     </div>
   </div>
   <div class="wrap fine">
-    <span>© {year} {SITE.name} · {SITE.host}</span>
+    <span>© {year} {SITE.name} · {SITE.host} · <a href="/terms#disclaimer">Disclaimer</a></span>
     <nav class="legal" aria-label="Policies">
       {LEGAL.map((item) => <a href={item.href}>{item.label}</a>)}
     </nav>
