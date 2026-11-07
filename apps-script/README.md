@@ -34,9 +34,13 @@ Resubmitting overwrites the file (Git keeps every version). Late work is accepte
 - **Student left?** Set **Active** to `no`. Their code stops working, and their work is kept.
 - The folder name comes from the roster name, so keep each student's name the same all year.
 
-### Enrollment form → Roster (automatic)
+### Enrollment form → Roster → email (automatic)
 
-Once connected, every new enrollment-form submission adds the student to the Roster (first name, last name, grade) with a student code already made. Names are tidied ("mohammad KHAN" → "Mohammad Khan"), "Grade 8" becomes `8`, and a student already on the Roster is never added twice.
+The website's **Sign up** page (`/signup`) opens the enrollment form. Once connected, every new submission adds the student to the Roster (first name, last name, grade) with a student code already made, then **emails the code** to the parent/guardian email (and the student email, if given). The Roster's **Code emailed** column records when and to whom. A name that's already on the Roster gets no email (so nobody can get another student's code by re-entering their name): handle those by hand.
+
+- **Families who enrolled before emails existed:** run **`sendMissingCodeEmails`** once. It emails everyone whose **Code emailed** cell is blank.
+- The form's thank-you message tells families to check their email (set by `connectEnrollmentForm`).
+- The form's public link (for `signupFormUrl` in `src/site.ts`) is at `<web app URL>?info=signup`. Names are tidied ("mohammad KHAN" → "Mohammad Khan"), "Grade 8" becomes `8`, and a student already on the Roster is never added twice.
 
 1. Open the enrollment form's **edit** link. The id is the long part between `/d/` and `/edit`.
 2. **Project Settings → Script Properties → Add:** `ENROLLMENT_FORM_ID` = that id.
@@ -44,9 +48,13 @@ Once connected, every new enrollment-form submission adds the student to the Ros
 
 The script's Google account (faiyajr@umich.edu) must be able to **edit** the form. If a different account owns it, share the form with that address first (form ⋮ → Add collaborators).
 
+## Teacher admin page (`/admin`)
+
+Set the Script Property **`ADMIN_CODE`** to a long passphrase (12+ characters) that only you know. Log in at `/admin` with it to see every student and their code, every submission, open anyone's code, and write feedback (it goes in the Submissions tab's **Feedback** column, so students see it on My work). Student codes can't use any admin action. The admin code is kept only in that browser tab and is forgotten when the tab closes. Change `ADMIN_CODE` any time to lock out old logins.
+
 ## Updating the script
 
-The code lives in this folder (`Code.gs`, `Roster.gs`, `Sheets.gs`, `Submissions.gs`, `GitHub.gs`, `Enrollment.gs`).
+The code lives in this folder (`Code.gs`, `Admin.gs`, `Roster.gs`, `Sheets.gs`, `Submissions.gs`, `GitHub.gs`, `Enrollment.gs`).
 
 ```bash
 cd apps-script
@@ -65,6 +73,7 @@ Always redeploy with `-i <that id>` so the URL in `src/site.ts` keeps working.
 | `SITE_URL` | `https://hikmah-hackers.github.io` |
 | `SHEET_ID` | set automatically by `setupCheck()` |
 | `ENROLLMENT_FORM_ID` | the enrollment form's id (see above) |
+| `ADMIN_CODE` | your admin passphrase for `/admin` (12+ characters) |
 
 ## Good to know
 

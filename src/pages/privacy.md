@@ -2,7 +2,7 @@
 layout: ../layouts/Policy.astro
 title: Privacy Policy
 lede: What we collect, why, where it's kept, and how to ask us to change or delete it. Written for parents and students.
-updated: 2026-10-30
+updated: 2026-11-06
 ---
 
 ## The short version
@@ -25,9 +25,11 @@ A parent or guardian fills in the enrollment form, which asks for:
 - **Background:** previous coding experience, which devices the student can use, internet reliability, how you heard about us, and anything else you choose to tell us.
 - **Consent:** confirmation that a parent or guardian agrees to the student joining.
 
+The website's **Sign up** page links to this form. When it's submitted, the student is added to the class roster and their **student code is emailed automatically** to the parent/guardian email, and to the student email if one was given. We note on the roster when and where the code was sent. We use these email addresses only for class matters, never for marketing.
+
 ### When a student uses the class website
 
-- **Student code:** each student gets a personal code from the teacher (like `KQM-4827`). It is used instead of an account, so students never create a username, password, or email login.
+- **Student code:** each student gets a personal code (like `KQM-4827`), emailed when they sign up or given by the teacher. It is used instead of an account, so students never create a username, password, or email login.
 - **Submitted work:** the code a student submits, an optional note to the teacher, and the date and time. Each file is labelled with the student's name and grade.
 - **Teacher feedback:** short notes the teacher writes about a student's work.
 
@@ -69,7 +71,7 @@ We use a small number of trusted services to run the program:
 
 | Service | What it holds | Who can see it |
 | --- | --- | --- |
-| **Google** (Forms, Sheets, Apps Script) | Enrollment answers, the class roster and student codes, the submissions log and feedback | Program teachers only |
+| **Google** (Forms, Sheets, Apps Script, Gmail) | Enrollment answers, the class roster and student codes, the submissions log and feedback. Gmail sends the student-code email. | Program teachers only |
 | **GitHub** (a private repository) | The code files students submit | Program teachers only |
 | **GitHub Pages** | Hosts this public website | Public (contains no student personal information except Showcase first names) |
 
@@ -86,7 +88,8 @@ We keep enrollment information, student codes, and submitted work for the curren
 ## Keeping information safe
 
 - Student work is stored in a **private** repository that only teachers can open.
-- The website never stores or displays other students' information. A student code only shows that student's own work.
+- The website never stores or displays other students' information. A student code only shows that student's own work, and can only log in and submit.
+- Only the teacher can open the website's admin page, using a separate admin code. It shows the roster and everyone's submitted work so the teacher can give feedback.
 - Repeated wrong login codes are blocked, which makes codes impractical to guess.
 - The keys that let the website save work are stored securely on Google's servers and never sent to anyone's browser.
 

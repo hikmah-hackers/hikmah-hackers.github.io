@@ -1,11 +1,12 @@
 /**
  * The Roster sheet: one row per student. You type names; generateStudentCodes() fills in codes.
- *   Code | First name | Last name | Grade | Active
+ *   Code | First name | Last name | Grade | Active | Code emailed
  * Set Active to "no" to switch a student's code off without deleting them.
+ * "Code emailed" is filled in when Enrollment.gs emails the code to the family.
  */
 
 var ROSTER_SHEET = 'Roster';
-var ROSTER_HEADERS = ['Code', 'First name', 'Last name', 'Grade', 'Active'];
+var ROSTER_HEADERS = ['Code', 'First name', 'Last name', 'Grade', 'Active', 'Code emailed'];
 // No I/O or 0/1, so codes are easy to read off a card.
 var CODE_LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 var CODE_DIGITS = '23456789';

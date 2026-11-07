@@ -1,0 +1,285 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import LogoMark from '../components/LogoMark.astro';
+import { SITE } from '../site';
+---
+
+<Base title="Teacher admin" description="Teacher dashboard for Hikmah Hackers." noindex>
+  <PageHead eyebrow="Teacher" title="Admin dashboard" lede="Every student, everything they’ve turned in, and your feedback. Students can’t open this page: their codes only log in and submit." />
+
+  <section class="section">
+    <div class="wrap" id="admin-root" data-endpoint={SITE.submitEndpoint}>
+      <form id="admin-gate" class="login card" action="javascript:void 0" hidden>
+        <LogoMark size={44} class="login-mark" />
+        <h2>Admin login</h2>
+        <p class="muted">Use the admin code saved in the Apps Script’s Script Properties (ADMIN_CODE).</p>
+        <label for="f-admin-code" class="sr-only">Admin code</label>
+        <input id="f-admin-code" type="password" autocomplete="current-password" spellcheck="false" aria-describedby="admin-error" required />
+        <small id="admin-error" class="err" aria-live="polite"></small>
+        <button type="submit" class="btn btn-gold" disabled>Log in <span class="arrow">→</span></button>
+        <p class="help">Stays logged in only until you close this tab.</p>
+      </form>
+
+      <p id="admin-loading" class="loading" hidden>Loading the class…</p>
+
+      <div id="admin-dash" hidden>
+        <div class="dash-head">
+          <h2>Salaam, teacher!</h2>
+          <div class="row">
+            <a id="admin-sheet" class="btn btn-ghost" href="#" target="_blank" rel="noopener">Open class sheet ↗</a>
+            <button id="admin-refresh" type="button" class="btn btn-ghost">Refresh</button>
+            <button id="admin-logout" type="button" class="btn btn-ghost">Log out</button>
+          </div>
+        </div>
+
+        <div id="admin-stats" class="stats" aria-live="polite"></div>
+
+        <div class="work-head">
+          <h3 class="sub-title">Turned-in work</h3>
+          <div class="row filters">
+            <label for="admin-week" class="sr-only">Week</label>
+            <select id="admin-week"></select>
+            <label class="check"><input id="admin-needs-feedback" type="checkbox" /> Needs feedback only</label>
+          </div>
+        </div>
+        <div id="admin-work" class="subs"></div>
+
+        <h3 class="sub-title">Students</h3>
+        <div id="admin-roster"></div>
+      </div>
+
+      <noscript><div class="empty">The admin page needs JavaScript turned on.</div></noscript>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initAdmin } from '../scripts/admin';
+  initAdmin((document.getElementById('admin-root') as HTMLElement).dataset.endpoint ?? '');
+</script>
+
+<style>
+  .login {
+    max-width: 460px;
+    margin-inline: auto;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    padding: clamp(28px, 5vw, 44px);
+    box-shadow: var(--shadow-lift);
+  }
+  .login :global(.login-mark) {
+    color: var(--green-900);
+  }
+  .login h2 {
+    font-size: 1.6rem;
+    margin: 6px 0 0;
+  }
+  .login input {
+    width: 100%;
+    padding: 14px;
+    font: 600 1.1rem var(--font-mono);
+    border: 2px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: #fff;
+  }
+  .login input:focus {
+    outline: none;
+    border-color: var(--green-700);
+    box-shadow: 0 0 0 4px rgb(212 168 75 / 0.35);
+  }
+  .login .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 15px;
+  }
+  .err {
+    min-height: 1.3em;
+    color: var(--danger);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .help {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  .loading {
+    text-align: center;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  .dash-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .dash-head h2 {
+    margin: 0;
+  }
+  .dash-head .row {
+    flex-wrap: wrap;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .stats :global(.stat) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 22px 24px;
+    background: var(--green-900);
+    color: var(--mint);
+    border-radius: var(--radius);
+  }
+  .stats :global(strong) {
+    font: 700 2.4rem/1 var(--font-display);
+    color: var(--gold);
+  }
+  .work-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 44px 0 16px;
+  }
+  .work-head .sub-title {
+    margin: 0;
+  }
+  .sub-title {
+    margin: 44px 0 16px;
+    font-size: 1.35rem;
+  }
+  .filters {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .filters select {
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    font: inherit;
+  }
+  .check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .check input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--green-900);
+  }
+  .subs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr));
+    gap: 16px;
+  }
+  .subs :global(.sub-head) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .subs :global(.when),
+  .subs :global(.note) {
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .subs :global(.code-wrap) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .subs :global(.code) {
+    background: var(--green-950);
+    color: var(--cream);
+    padding: 16px 18px;
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    font-size: 0.85rem;
+    margin: 0;
+    max-height: 420px;
+  }
+  .subs :global(.small) {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    align-self: flex-start;
+  }
+  .subs :global(.feedback-form) {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .subs :global(.feedback-form label) {
+    font: 600 0.75rem var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-ink);
+  }
+  .subs :global(textarea) {
+    width: 100%;
+    padding: 10px 12px;
+    font: inherit;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    resize: vertical;
+  }
+  .subs :global(textarea:focus) {
+    outline: none;
+    border-color: var(--green-700);
+    box-shadow: 0 0 0 3px rgb(212 168 75 / 0.35);
+  }
+  .subs :global(.save-status) {
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  #admin-roster :global(.table-scroll) {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+  #admin-roster :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--cream-50);
+  }
+  #admin-roster :global(th),
+  #admin-roster :global(td) {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  #admin-roster :global(th) {
+    background: #e6dcc9;
+    font-size: 0.85rem;
+  }
+  #admin-roster :global(.mono) {
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+  #admin-roster :global(.small-text) {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  #admin-roster :global(.inactive) {
+    opacity: 0.55;
+  }
+  @media (max-width: 800px) {
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

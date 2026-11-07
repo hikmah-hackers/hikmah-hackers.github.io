@@ -20,6 +20,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
     <nav class="nav-desktop" aria-label="Main">
       {links.map((link) => <a href={link.href} aria-current={link.active ? 'page' : undefined}>{link.label}</a>)}
       <a href={SITE.editor.url} class="btn btn-ghost editor" target="_blank" rel="noopener" title={`Open the ${SITE.editor.name} in a new tab`}>Python editor ↗</a>
+      <a href="/login" class="btn btn-ghost account" data-account-link aria-current={isActive('/login') || isActive('/portal') ? 'page' : undefined}>Log in</a>
       <a href="/submit" class="btn btn-gold submit" aria-current={isActive('/submit') ? 'page' : undefined}>Submit</a>
     </nav>
 
@@ -28,11 +29,24 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
       <nav aria-label="Main (mobile)">
         {links.map((link) => <a href={link.href} aria-current={link.active ? 'page' : undefined}>{link.label}</a>)}
         <a href={SITE.editor.url} class="btn btn-ghost" target="_blank" rel="noopener">Python editor ↗</a>
+        <a href="/login" class="btn btn-ghost" data-account-link>Log in</a>
         <a href="/submit" class="btn btn-gold">Submit work</a>
       </nav>
     </details>
   </div>
 </header>
+
+<script>
+  import { session } from '../lib/portal-api';
+  // Logged-in students go straight to their work instead of the login page.
+  const current = session.get();
+  if (current) {
+    document.querySelectorAll<HTMLAnchorElement>('[data-account-link]').forEach((link) => {
+      link.href = '/portal';
+      link.textContent = 'My work';
+    });
+  }
+</script>
 
 <style>
   .site-header {
@@ -106,8 +120,17 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
     transform: scaleX(1);
   }
   .submit,
-  .editor {
+  .editor,
+  .account {
     padding: 10px 18px;
+  }
+  .account {
+    color: var(--cream);
+    border-color: rgb(243 235 221 / 0.35);
+  }
+  .account:hover,
+  .account[aria-current='page'] {
+    border-color: var(--gold);
   }
   .editor {
     margin-left: 10px;

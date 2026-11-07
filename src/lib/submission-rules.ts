@@ -74,3 +74,36 @@ export interface ApiResult<T> {
   data?: T;
   error?: string;
 }
+
+/* ---------- Admin API shapes (see apps-script/Admin.gs) ---------- */
+
+export const FEEDBACK_MAX = 2000;
+
+export interface RosterEntry {
+  id: string;
+  code: string;
+  firstName: string;
+  lastName: string;
+  grade: string;
+  active: boolean;
+  emailed: string;
+}
+
+export interface SubmissionRow {
+  submittedAt: string;
+  week: number;
+  studentId: string;
+  firstName: string;
+  lastName: string;
+  grade: string;
+  late: boolean;
+  resubmission: boolean;
+  note: string;
+  feedback: string;
+}
+
+export interface AdminOverview {
+  roster: RosterEntry[];
+  submissions: SubmissionRow[];
+  sheetUrl: string;
+}

@@ -1,0 +1,70 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import LoginPanel from '../components/LoginPanel.astro';
+import { SITE } from '../site';
+---
+
+<Base title="Log in" description="Log in to Hikmah Hackers with your student code.">
+  <PageHead eyebrow="Log in" title="Welcome back" lede="Type the student code from your sign-up email to see your work and turn in projects." />
+
+  <section class="section">
+    <div class="wrap">
+      <div id="login-box" data-endpoint={SITE.submitEndpoint}>
+        <LoginPanel />
+      </div>
+
+      <div class="others">
+        <a class="card is-hoverable other" href="/signup">
+          <span class="meta">New here?</span>
+          <h3>Sign up for Hikmah Hackers</h3>
+          <p>Fill in the form with a parent. Your code comes by email.</p>
+        </a>
+        <a class="card is-hoverable other" href="/admin">
+          <span class="meta">Teacher</span>
+          <h3>Admin login</h3>
+          <p>See every student, their work, and leave feedback.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { session } from '../lib/portal-api';
+  import { initLoginPanel } from '../scripts/login-panel';
+
+  // Only same-site paths, so a link can't send students somewhere else after logging in.
+  const next = new URLSearchParams(location.search).get('next') ?? '';
+  const target = /^\/[a-z0-9/_-]*$/i.test(next) ? next : '/portal';
+
+  if (session.get()) {
+    location.replace(target);
+  } else {
+    const box = document.getElementById('login-box') as HTMLElement;
+    const form = box.querySelector<HTMLFormElement>('[data-login-panel]');
+    if (form) initLoginPanel(form, { endpoint: box.dataset.endpoint ?? '', onLogin: () => location.assign(target) });
+  }
+</script>
+
+<style>
+  .others {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 720px;
+    margin: 40px auto 0;
+  }
+  .other {
+    text-decoration: none;
+    color: inherit;
+  }
+  .other h3 {
+    margin: 4px 0;
+  }
+  @media (max-width: 640px) {
+    .others {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

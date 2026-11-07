@@ -1,5 +1,5 @@
 import { storage } from './storage';
-import type { ApiResult, CodeData, LoginData, Student, SubmitData, WorkPayload } from './submission-rules';
+import type { AdminOverview, ApiResult, CodeData, LoginData, Student, SubmitData, WorkPayload } from './submission-rules';
 
 const REQUEST_TIMEOUT_MS = 25_000;
 const SESSION_KEY = 'hh:session';
@@ -73,4 +73,22 @@ export const portalApi = {
     call<SubmitData>(endpoint, { action: 'submit', studentCode, ...work }),
   getCode: (endpoint: string, studentCode: string, week: number) =>
     call<CodeData>(endpoint, { action: 'getCode', studentCode, week }),
+};
+
+/* ---------- Teacher admin: the admin code lives only in this tab's sessionStorage ---------- */
+
+const ADMIN_KEY = 'hh:admin';
+
+export const adminSession = {
+  get: (): string | null => storage.get(ADMIN_KEY, 'session'),
+  save: (adminCode: string): void => storage.set(ADMIN_KEY, adminCode, 'session'),
+  clear: (): void => storage.remove(ADMIN_KEY, 'session'),
+};
+
+export const adminApi = {
+  overview: (endpoint: string, adminCode: string) => call<AdminOverview>(endpoint, { action: 'adminOverview', adminCode }),
+  getCode: (endpoint: string, adminCode: string, studentId: string, week: number) =>
+    call<CodeData>(endpoint, { action: 'adminGetCode', adminCode, studentId, week }),
+  saveFeedback: (endpoint: string, adminCode: string, studentId: string, week: number, feedback: string) =>
+    call<{ saved: boolean }>(endpoint, { action: 'adminFeedback', adminCode, studentId, week, feedback }),
 };

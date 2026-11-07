@@ -25,12 +25,17 @@ function createClassBook() {
   return book;
 }
 
+/** Makes sure the tab exists with every header. Columns added in later versions go on the end. */
 function ensureSheet(book, name, headers) {
   var sheet = book.getSheetByName(name) || book.insertSheet(name);
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(headers);
     sheet.setFrozenRows(1);
+    return sheet;
   }
+  var existing = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(function (h) { return String(h).trim(); });
+  var missing = headers.filter(function (header) { return existing.indexOf(header) === -1; });
+  if (missing.length) sheet.getRange(1, existing.length + 1, 1, missing.length).setValues([missing]);
   return sheet;
 }
 

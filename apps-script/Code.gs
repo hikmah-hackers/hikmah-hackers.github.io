@@ -1,11 +1,12 @@
 /**
  * Hikmah Hackers: student portal + submission bridge.
  *
- * The website POSTs { action, studentCode, ... } here. Every action needs a valid
- * personal student code from the Roster sheet. Actions:
+ * The website POSTs { action, studentCode, ... } here. Student actions need a valid
+ * personal student code from the Roster sheet:
  *   login   -> the student's name and their submissions (with your feedback)
  *   submit  -> commits code to the PRIVATE repo as week-01/<first-last>/main.py
  *   getCode -> returns a past submission's code
+ * Admin actions (the /admin page) need ADMIN_CODE instead. See Admin.gs.
  *
  * Setup: see apps-script/README.md. Secrets live in Script Properties, never in code:
  *   GITHUB_TOKEN   fine-grained token, Contents: read & write on the submissions repo only
@@ -13,13 +14,14 @@
  *   SITE_URL       e.g. https://hikmah-hackers.github.io
  *   GITHUB_BRANCH  optional, default "main"
  *   SHEET_ID       created automatically by setupCheck()
+ *   ADMIN_CODE     the teacher's admin passphrase (12+ characters)
  *
- * Files: Code.gs (entry + config), Roster.gs, Sheets.gs, Submissions.gs, GitHub.gs.
+ * Files: Code.gs (entry + config), Admin.gs, Roster.gs, Sheets.gs, Submissions.gs, GitHub.gs, Enrollment.gs.
  */
 
 // Keep in sync with website/src/lib/submission-rules.ts
 // JSON escaping can double the code's length (newlines, quotes, tabs), so the body limit has headroom.
-var LIMITS = { codeMaxChars: 50000, noteMax: 500, bodyMaxChars: 102000 };
+var LIMITS = { codeMaxChars: 50000, noteMax: 500, feedbackMax: 2000, bodyMaxChars: 102000 };
 var TIME_ZONE = 'America/Detroit';
 var RATE_LIMIT = { perStudentPerMinute: 4, globalPerMinute: 60, badLoginsPer10Min: 30 };
 var BAD_LOGIN_WINDOW_SECONDS = 600;
@@ -32,11 +34,25 @@ var ACTIONS = {
   getCode: handleGetCode,
 };
 
+var ADMIN_ACTIONS = {
+  adminOverview: handleAdminOverview,
+  adminGetCode: handleAdminGetCode,
+  adminFeedback: handleAdminFeedback,
+};
+
 /* ------------------------------------------------------------------ */
 /* Entry points                                                        */
 /* ------------------------------------------------------------------ */
 
-function doGet() {
+/** GET ?info=signup -> the enrollment form's public link, for the website's Sign up page. */
+function doGet(e) {
+  if (e && e.parameter && e.parameter.info === 'signup') {
+    try {
+      return respond({ success: true, data: { signupUrl: openEnrollmentForm().getPublishedUrl() } });
+    } catch (err) {
+      return fail('The sign-up form isn’t connected yet.');
+    }
+  }
   return respond({ success: true, data: { status: 'ok' } });
 }
 
@@ -48,10 +64,17 @@ function doPost(e) {
 
     // Count wrong codes before anything else so codes can't be brute-forced.
     if (tooManyBadLogins()) return fail('Too many wrong codes. Wait 10 minutes, then try again.');
+    if (ADMIN_ACTIONS.hasOwnProperty(request.action)) {
+      if (!isAdminCode(request.adminCode)) {
+        recordBadLogin();
+        return fail('That admin code isn’t right.');
+      }
+      return respond({ success: true, data: ADMIN_ACTIONS[request.action](config, request) });
+    }
     var student = findStudent(config, request.studentCode);
     if (!student) {
       recordBadLogin();
-      return fail('That student code isn’t right. Check the card your teacher gave you.');
+      return fail('That student code isn’t right. Check your sign-up email or the card your teacher gave you.');
     }
 
     return respond({ success: true, data: ACTIONS[request.action](config, student, request) });
@@ -145,7 +168,8 @@ function parseRequest(e) {
   } catch (err) {
     return null;
   }
-  if (!raw || typeof raw !== 'object' || !ACTIONS.hasOwnProperty(raw.action)) return null;
+  if (!raw || typeof raw !== 'object') return null;
+  if (!ACTIONS.hasOwnProperty(raw.action) && !ADMIN_ACTIONS.hasOwnProperty(raw.action)) return null;
   // Allowlist: copy only the fields we expect, coerced to the right type.
   return {
     action: raw.action,
@@ -153,6 +177,9 @@ function parseRequest(e) {
     week: Number(raw.week),
     code: asString(raw.code).replace(/\r\n/g, '\n'),
     note: asString(raw.note).trim(),
+    adminCode: asString(raw.adminCode).slice(0, 200),
+    studentId: asString(raw.studentId),
+    feedback: asString(raw.feedback).trim(),
   };
 }
 

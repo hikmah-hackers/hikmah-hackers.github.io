@@ -27,15 +27,20 @@ export const SITE = {
    */
   submitEndpoint:
     'https://script.google.com/macros/s/AKfycbzGIs69fC0v49TkUaxtnmr1uD2Veb_MrJjdvuqr3HNWgNMNsI_LzjdhRxxnrDI24qJb/exec',
+
+  /**
+   * The enrollment form's public link (the Sign up button opens it). Get it from
+   * `<submitEndpoint>?info=signup`. Empty = the Sign up page says sign-ups aren't open yet.
+   */
+  signupFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSf-Oqw4GADEmL6O5PNXDxf7ntLsjTV0CZUEASXOmYklLHBs-w/viewform',
 } as const;
 
 export const NAV = [
   { href: '/lessons', label: 'Lessons' },
   { href: '/assignments', label: 'Assignments' },
-  { href: '/announcements', label: 'News' },
   { href: '/showcase', label: 'Showcase' },
   { href: '/guide', label: 'Guide' },
-  { href: '/portal', label: 'My work' },
+  { href: '/signup', label: 'Sign up' },
 ] as const;
 
 export const LEGAL = [

@@ -1,0 +1,116 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { SITE } from '../site';
+
+const steps = [
+  { title: 'Fill in the form', body: 'Do it with a parent or guardian. It takes about 5 minutes.' },
+  { title: 'Check your email', body: 'Your personal student code (like KQM-4827) is emailed to your parent, and to you if you gave an email.' },
+  { title: 'Log in', body: 'Type your code on the Log in page. That’s it. No account or password to make.' },
+];
+---
+
+<Base title="Sign up" description="Sign up for Hikmah Hackers, the free Friday coding class for grades 7–10 at Darul Uloom Michigan.">
+  <PageHead eyebrow="Sign up" title="Join Hikmah Hackers" lede={`A free coding class for grades 7–10, every ${SITE.classDay} at ${SITE.host}. Sign up once and your student code comes straight to your email.`}>
+    <div class="row actions rise" style="--i:3">
+      {
+        SITE.signupFormUrl ? (
+          <a class="btn btn-gold big" href={SITE.signupFormUrl} target="_blank" rel="noopener">
+            Open the sign-up form <span class="arrow">↗</span>
+          </a>
+        ) : (
+          <span class="closed">Sign-ups open soon. Ask your teacher.</span>
+        )
+      }
+      <a class="btn btn-ghost big on-dark-ghost" href="/login">I already have a code</a>
+    </div>
+  </PageHead>
+
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>How it works</p>
+      <ol class="steps">
+        {
+          steps.map((step, i) => (
+            <li class="card step" data-reveal style={`--i:${i}`}>
+              <span class="num">{i + 1}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="card notes" data-reveal>
+        <h3>Good to know</h3>
+        <ul>
+          <li>The email comes from <strong>Hikmah Hackers</strong> within a few minutes. Check spam if you don’t see it.</li>
+          <li>Keep your code private. It’s how you log in and turn in work.</li>
+          <li>Already signed up, or lost your code? Don’t fill in the form again. Ask your teacher or email <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.</li>
+          <li>See how we protect your information in our <a href="/privacy">Privacy Policy</a>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .actions {
+    margin-top: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .big {
+    padding: 15px 26px;
+    font-size: 1.05rem;
+  }
+  .on-dark-ghost {
+    color: var(--cream);
+    border-color: rgb(243 235 221 / 0.35);
+  }
+  .on-dark-ghost:hover {
+    border-color: var(--gold);
+  }
+  .closed {
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .steps {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .num {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--green-900);
+    color: var(--gold);
+    font: 700 1.1rem var(--font-display);
+  }
+  .step h3 {
+    margin: 12px 0 4px;
+  }
+  .notes {
+    margin-top: 24px;
+  }
+  .notes ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+  .notes a {
+    color: var(--green-700);
+  }
+  @media (max-width: 800px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

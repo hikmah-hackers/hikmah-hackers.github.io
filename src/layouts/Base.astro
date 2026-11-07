@@ -8,8 +8,10 @@ import { SITE } from '../site';
 interface Props {
   title?: string;
   description?: string;
+  /** Keep the page out of search engines (e.g. the teacher's admin page). */
+  noindex?: boolean;
 }
-const { title, description = SITE.description } = Astro.props;
+const { title, description = SITE.description, noindex = false } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -21,6 +23,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/hikmah-hackers-icon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#0e3b2e" />
