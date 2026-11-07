@@ -108,6 +108,10 @@ kbd,
 pre {
   font-family: var(--font-mono);
 }
+/* The code theme's comment gray is too faint on our dark green (WCAG AA needs 4.5:1). */
+.astro-code span[style*='#768390'] {
+  color: var(--mint-dim) !important;
+}
 
 ::selection {
   background: var(--gold);
