@@ -38,6 +38,7 @@ export const SITE = {
 export const NAV = [
   { href: '/lessons', label: 'Lessons' },
   { href: '/assignments', label: 'Assignments' },
+  { href: '/announcements', label: 'News' },
   { href: '/showcase', label: 'Showcase' },
   { href: '/guide', label: 'Guide' },
   { href: '/signup', label: 'Sign up' },
