@@ -20,6 +20,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
       {links.map((link) => <a href={link.href} aria-current={link.active ? 'page' : undefined}>{link.label}</a>)}
       <a href={SITE.editor.url} class="btn btn-ghost editor" target="_blank" rel="noopener" title={`Open the ${SITE.editor.name} in a new tab`}>Python editor ↗</a>
       <a href="/login" class="btn btn-ghost account" data-account-link aria-current={isActive('/login') || isActive('/portal') ? 'page' : undefined}>Log in</a>
+      <a href="/admin" class="btn btn-ghost account" aria-current={isActive('/admin') ? 'page' : undefined} title="Teacher admin">Admin</a>
       <a href="/submit" class="btn btn-gold submit" aria-current={isActive('/submit') ? 'page' : undefined}>Submit</a>
     </nav>
 
@@ -29,6 +30,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
         {links.map((link) => <a href={link.href} aria-current={link.active ? 'page' : undefined}>{link.label}</a>)}
         <a href={SITE.editor.url} class="btn btn-ghost" target="_blank" rel="noopener">Python editor ↗</a>
         <a href="/login" class="btn btn-ghost" data-account-link>Log in</a>
+        <a href="/admin" class="btn btn-ghost">Teacher admin</a>
         <a href="/submit" class="btn btn-gold">Submit work</a>
       </nav>
     </details>
@@ -206,7 +208,7 @@ const links = NAV.map((item) => ({ ...item, active: isActive(item.href) }));
     justify-content: center;
   }
 
-  @media (max-width: 1180px) {
+  @media (max-width: 1260px) {
     .nav-desktop {
       display: none;
     }

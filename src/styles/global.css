@@ -225,6 +225,11 @@ pre {
 }
 
 /* ---------- Cards ---------- */
+/* Classes like .card and .row set display, which would otherwise beat the hidden attribute. */
+[hidden] {
+  display: none !important;
+}
+
 .card {
   position: relative;
   display: flex;
