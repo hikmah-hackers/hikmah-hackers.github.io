@@ -16,8 +16,10 @@ var ENROLLMENT_QUESTIONS = {
   lastName: 'Student last name',
   grade: 'Current grade',
   studentEmail: 'Student email',
-  parentEmail: 'Parent/guardian email',
+  parentEmail: 'Email',
 };
+// Older responses used this title for the parent email; still read it so they keep working.
+var OLD_PARENT_EMAIL_TITLE = 'Parent/guardian email';
 
 var SIGNUP_CONFIRMATION =
   'Thank you for signing up for Hikmah Hackers! Your student code is on its way to the email address(es) you gave. ' +
@@ -212,7 +214,7 @@ function readEnrollmentAnswers(response) {
     lastName: titleCase(byTitle[ENROLLMENT_QUESTIONS.lastName] || ''),
     grade: parseGrade(byTitle[ENROLLMENT_QUESTIONS.grade] || ''),
     studentEmail: byTitle[ENROLLMENT_QUESTIONS.studentEmail] || '',
-    parentEmail: byTitle[ENROLLMENT_QUESTIONS.parentEmail] || '',
+    parentEmail: byTitle[ENROLLMENT_QUESTIONS.parentEmail] || byTitle[OLD_PARENT_EMAIL_TITLE] || '',
   };
 }
 
