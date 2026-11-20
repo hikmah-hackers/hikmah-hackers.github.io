@@ -16,7 +16,7 @@ assignment:
   due: 2026-11-27
   summary: Write a program that shares things out fairly and tells you what's left over.
   required:
-    - Ask how many things there are (samosas, dates, dollars...) with int(input())
+    - Ask how many things there are (cups of baat, dates, dollars...) with int(input())
     - Ask how many people are sharing, also with int(input())
     - Use // to print how many each person gets
     - Use % to print how many are left over
@@ -33,11 +33,11 @@ age = int(input("Age? "))
 
 `int()` turns the answer into a number, so we can do math with it. Today we do **more math**.
 
-## The big idea: sharing samosas
+## The big idea: sharing baat
 
-Your mom made **17 samosas** for **5 people**. How do you share them fairly?
+Your mom made **17 cups of baat** (rice) for **5 people**. How do you share it fairly, in full cups?
 
-- Each person gets **3** samosas (5 × 3 = 15).
+- Each person gets **3** cups (5 × 3 = 15).
 - There are **2** left over (17 − 15 = 2).
 
 Python has two signs for this:
@@ -71,25 +71,25 @@ You should see:
 | `17 // 5` | `3` | Whole groups only, throw away the decimal |
 | `17 % 5` | `2` | The leftovers |
 
-## Let's build: samosa sharer
+## Let's build: baat sharer
 
 ```python
-food = int(input("Samosas? "))
+cups = int(input("Cups? "))
 people = int(input("People? "))
-each = food // people
-left = food % people
+each = cups // people
+left = cups % people
 print("Each gets", each)
 print("Left over:", left)
 ```
 
 ```
-Samosas? 17
+Cups? 17
 People? 5
 Each gets 3
 Left over: 2
 ```
 
-Try it with different numbers. What happens with 20 samosas and 5 people?
+Try it with different numbers. What happens with 20 cups and 5 people?
 
 ## Even or odd?
 
@@ -151,7 +151,7 @@ Left over: 2
 | --- | --- | --- |
 | `17 / 5` when you wanted whole groups | Gives `3.4`, not `3` | Use `//` |
 | `n = input("? ")` then `n // 5` | `TypeError`: unsupported operand type(s) for //: 'str' and 'int' | Use `int(input(...))` |
-| `samosas // 0` | `ZeroDivisionError`: division by zero | You can't share with 0 people! Type a number bigger than 0 |
+| `cups // 0` | `ZeroDivisionError`: division by zero | You can't share with 0 people! Type a number bigger than 0 |
 | Using `%` to mean percent | `50 % 10` gives `0`, not 5 | `%` means leftovers. For 10% of 50, use `50 * 10 / 100` |
 
 ## Sneak peek: next week
