@@ -1,0 +1,50 @@
+﻿[
+    {
+        "file":  "slide-01.webp",
+        "text":  "Week 4: Sharing Fairly - // and % share things out and find the leftovers - DARUL ULOOM MICHIGAN · FRIDAYS"
+    },
+    {
+        "file":  "slide-02.webp",
+        "text":  "TODAY - Our plan for 40 minutes - Hikmah Hackers · Week 4"
+    },
+    {
+        "file":  "slide-03.webp",
+        "text":  "THE BIG IDEA - 17 samosas, 5 people. How do we share? - 3 each"
+    },
+    {
+        "file":  "slide-04.webp",
+        "text":  "LET\u0027S CODE · TYPE ALONG - Three ways to divide - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-05.webp",
+        "text":  "REMEMBER THIS - / vs // vs % - Hikmah Hackers · Week 4"
+    },
+    {
+        "file":  "slide-06.webp",
+        "text":  "LET\u0027S BUILD - Samosa sharer - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-07.webp",
+        "text":  "A HANDY TRICK - Even or odd? Use % 2 - Even"
+    },
+    {
+        "file":  "slide-08.webp",
+        "text":  "LET\u0027S CODE · TYPE ALONG - Minutes into hours - TYPE THIS, THEN PRESS RUN"
+    },
+    {
+        "file":  "slide-09.webp",
+        "text":  "YOUR TURN · 5 MIN - Share the Eid money - money = int(input(\"Eid money? \")) kids = int(input(\"Kids? \")) each = money // kids left = money % kids print(\"Each kid gets\", each) print(\"Left over:\", left)"
+    },
+    {
+        "file":  "slide-10.webp",
+        "text":  "BUG HUNT - Four mistakes everyone makes - Hikmah Hackers · Week 4"
+    },
+    {
+        "file":  "slide-11.webp",
+        "text":  "MINI-PROJECT · DUE NEXT FRIDAY - Fair Share Calculator - Required"
+    },
+    {
+        "file":  "slide-12.webp",
+        "text":  "NEXT FRIDAY - Programs that make decisions - score = int(input(\"Score? \")) if score \u003e= 10: print(\"You win!\")"
+    }
+]
